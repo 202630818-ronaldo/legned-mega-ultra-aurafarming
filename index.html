@@ -1,0 +1,2075 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>오늘 뭐 먹지?</title>
+  <meta
+    name="description"
+    content="AI가 오늘 먹을 음식을 대신 골라주는 재미있는 음식 결정 서비스"
+  />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+
+  <div class="background-glow glow-one"></div>
+  <div class="background-glow glow-two"></div>
+
+  <header class="header">
+    <div class="logo">
+      <span>🍽️</span>
+      <strong>오늘 뭐 먹지?</strong>
+    </div>
+
+    <div class="progress">
+      <span class="progress-step active" data-progress="category">
+        01 카테고리
+      </span>
+      <span class="progress-line"></span>
+
+      <span class="progress-step" data-progress="style">
+        02 스타일
+      </span>
+      <span class="progress-line"></span>
+
+      <span class="progress-step" data-progress="analysis">
+        03 AI 분석
+      </span>
+      <span class="progress-line"></span>
+
+      <span class="progress-step" data-progress="result">
+        04 결과
+      </span>
+    </div>
+  </header>
+
+
+  <main>
+
+    <!-- =========================================
+         STEP 1
+    ========================================== -->
+    <section id="category-screen" class="screen active">
+
+      <div class="hero">
+        <span class="eyebrow">AI FOOD DECISION</span>
+
+        <h1>
+          오늘은<br />
+          <span>뭐 먹지?</span>
+        </h1>
+
+        <p>
+          고민은 그만.<br />
+          카테고리 하나만 골라줘. 나머지는 AI가 결정할게.
+        </p>
+      </div>
+
+
+      <div class="section-title">
+        <div>
+          <span class="mini-label">CHOOSE CATEGORY</span>
+          <h2>오늘 당기는 음식은?</h2>
+        </div>
+
+        <button id="shuffle-category" class="shuffle-button">
+          <span>↻</span>
+          다시 만들기
+        </button>
+      </div>
+
+
+      <div id="category-grid" class="category-grid"></div>
+
+    </section>
+
+
+    <!-- =========================================
+         STEP 2
+    ========================================== -->
+    <section id="style-screen" class="screen">
+
+      <div class="hero small">
+        <span class="eyebrow">DECISION STYLE</span>
+
+        <h1>
+          누구처럼<br />
+          <span>골라볼까?</span>
+        </h1>
+
+        <p>
+          같은 음식이어도 어떤 방식으로 판단하느냐에 따라<br />
+          결과가 달라질 수 있어.
+        </p>
+      </div>
+
+
+      <div class="selected-category-preview">
+        <div id="selected-category-icon"></div>
+
+        <div>
+          <span>선택한 카테고리</span>
+          <strong id="selected-category-name"></strong>
+        </div>
+      </div>
+
+
+      <div id="style-grid" class="style-grid"></div>
+
+
+      <div class="navigation-buttons">
+        <button id="back-to-category" class="secondary-button">
+          ← 카테고리 다시 선택
+        </button>
+
+        <button id="start-analysis" class="primary-button" disabled>
+          AI 분석 시작 →
+        </button>
+      </div>
+
+    </section>
+
+
+    <!-- =========================================
+         STEP 3
+    ========================================== -->
+    <section id="analysis-screen" class="screen">
+
+      <div class="analysis-header">
+
+        <span class="eyebrow">AI DECISION ENGINE</span>
+
+        <h1>
+          AI가 지금<br />
+          <span>고르는 중...</span>
+        </h1>
+
+        <p id="analysis-description">
+          후보 음식을 분석하고 있습니다.
+        </p>
+
+      </div>
+
+
+      <div class="analysis-status">
+
+        <div class="analysis-status-top">
+          <span id="analysis-stage">분석 준비 중</span>
+          <span id="analysis-count">20 / 20</span>
+        </div>
+
+        <div class="progress-bar">
+          <div id="analysis-progress"></div>
+        </div>
+
+      </div>
+
+
+      <div id="candidate-grid" class="candidate-grid"></div>
+
+
+      <div id="analysis-log" class="analysis-log">
+        <div class="log-title">
+          <span class="live-dot"></span>
+          AI DECISION LOG
+        </div>
+
+        <div id="log-content"></div>
+      </div>
+
+    </section>
+
+
+    <!-- =========================================
+         STEP 4
+    ========================================== -->
+    <section id="result-screen" class="screen">
+
+      <div class="result-header">
+
+        <span class="eyebrow">FINAL DECISION</span>
+
+        <h1>
+          오늘의<br />
+          <span>최종 추천</span>
+        </h1>
+
+        <p id="result-description"></p>
+
+      </div>
+
+
+      <div id="winner-card"></div>
+
+
+      <div class="top-three-title">
+        <span>AI FINAL RANKING</span>
+        <h2>오늘의 TOP 3</h2>
+      </div>
+
+      <div id="top-three-grid" class="top-three-grid"></div>
+
+
+      <div class="result-actions">
+
+        <button id="restart-button" class="primary-button">
+          🍽️ 다시 골라보기
+        </button>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <footer>
+    <p>오늘 뭐 먹지? · AI Food Decision Assistant</p>
+  </footer>
+
+
+  <script src="js/data.js"></script>
+  <script src="js/decision.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
+const CATEGORY_DATA = {
+
+  korean: {
+    id: "korean",
+    name: "한식",
+    icon: "🍚",
+    description: "한국인의 소울푸드",
+    foods: [
+      {
+        name: "김치찌개",
+        image: "https://images.unsplash.com/photo-1590301157890-4810ed352733?auto=format&fit=crop&w=900&q=80",
+        description: "얼큰하고 깊은 맛의 대표적인 집밥",
+        tags: ["국물", "매운맛", "든든"],
+        popularity: 94,
+        spicy: 70,
+        heavy: 65,
+        light: 35,
+        healthy: 65,
+        comfort: 95,
+        fun: 65
+      },
+      {
+        name: "제육볶음",
+        image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80",
+        description: "매콤달콤한 돼지고기 볶음",
+        tags: ["고기", "매운맛", "밥"],
+        popularity: 92,
+        spicy: 72,
+        heavy: 75,
+        light: 25,
+        healthy: 55,
+        comfort: 88,
+        fun: 78
+      },
+      {
+        name: "비빔밥",
+        image: "https://images.unsplash.com/photo-1553163147-622ab57be1c7?auto=format&fit=crop&w=900&q=80",
+        description: "다양한 재료를 한 번에 즐기는 음식",
+        tags: ["밥", "채소", "균형"],
+        popularity: 90,
+        spicy: 45,
+        heavy: 45,
+        light: 65,
+        healthy: 88,
+        comfort: 75,
+        fun: 80
+      },
+      {
+        name: "불고기",
+        image: "https://images.unsplash.com/photo-1580651315530-69c8e0026377?auto=format&fit=crop&w=900&q=80",
+        description: "달콤짭짤한 한국식 소고기 요리",
+        tags: ["고기", "달콤", "든든"],
+        popularity: 96,
+        spicy: 10,
+        heavy: 70,
+        light: 30,
+        healthy: 65,
+        comfort: 90,
+        fun: 75
+      },
+      {
+        name: "삼겹살",
+        image: "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?auto=format&fit=crop&w=900&q=80",
+        description: "구워 먹는 재미가 있는 대표적인 고기",
+        tags: ["고기", "구이", "회식"],
+        popularity: 98,
+        spicy: 5,
+        heavy: 95,
+        light: 5,
+        healthy: 35,
+        comfort: 92,
+        fun: 98
+      },
+      {
+        name: "된장찌개",
+        image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=900&q=80",
+        description: "구수하고 편안한 한국식 찌개",
+        tags: ["국물", "집밥", "구수"],
+        popularity: 91,
+        spicy: 35,
+        heavy: 45,
+        light: 55,
+        healthy: 78,
+        comfort: 96,
+        fun: 55
+      },
+      {
+        name: "냉면",
+        image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=900&q=80",
+        description: "시원하고 깔끔하게 즐기는 면요리",
+        tags: ["면", "시원", "여름"],
+        popularity: 89,
+        spicy: 35,
+        heavy: 30,
+        light: 78,
+        healthy: 65,
+        comfort: 75,
+        fun: 88
+      },
+      {
+        name: "순두부찌개",
+        image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=900&q=80",
+        description: "부드러운 순두부와 얼큰한 국물",
+        tags: ["국물", "부드러움", "매운맛"],
+        popularity: 88,
+        spicy: 60,
+        heavy: 48,
+        light: 55,
+        healthy: 82,
+        comfort: 91,
+        fun: 65
+      },
+      {
+        name: "김밥",
+        image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=900&q=80",
+        description: "간편하게 먹기 좋은 국민 간식",
+        tags: ["간편", "밥", "간식"],
+        popularity: 94,
+        spicy: 20,
+        heavy: 35,
+        light: 65,
+        healthy: 65,
+        comfort: 85,
+        fun: 90
+      },
+      {
+        name: "닭갈비",
+        image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=900&q=80",
+        description: "매콤하게 볶아 먹는 닭고기 요리",
+        tags: ["닭", "매운맛", "볶음"],
+        popularity: 87,
+        spicy: 78,
+        heavy: 75,
+        light: 25,
+        healthy: 58,
+        comfort: 82,
+        fun: 94
+      },
+      {
+        name: "갈비탕",
+        image: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=80",
+        description: "진하고 따뜻한 소갈비 국물",
+        tags: ["국물", "고기", "든든"],
+        popularity: 85,
+        spicy: 5,
+        heavy: 75,
+        light: 30,
+        healthy: 65,
+        comfort: 96,
+        fun: 65
+      },
+      {
+        name: "떡국",
+        image: "https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?auto=format&fit=crop&w=900&q=80",
+        description: "담백하고 따뜻한 떡 요리",
+        tags: ["떡", "국물", "담백"],
+        popularity: 80,
+        spicy: 5,
+        heavy: 50,
+        light: 55,
+        healthy: 65,
+        comfort: 90,
+        fun: 65
+      },
+      {
+        name: "보쌈",
+        image: "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?auto=format&fit=crop&w=900&q=80",
+        description: "부드러운 돼지고기와 김치의 조합",
+        tags: ["고기", "김치", "술안주"],
+        popularity: 89,
+        spicy: 35,
+        heavy: 85,
+        light: 20,
+        healthy: 55,
+        comfort: 90,
+        fun: 92
+      },
+      {
+        name: "잡채",
+        image: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=80",
+        description: "쫄깃한 당면과 다양한 재료의 조합",
+        tags: ["면", "잔치", "달콤"],
+        popularity: 82,
+        spicy: 5,
+        heavy: 55,
+        light: 50,
+        healthy: 62,
+        comfort: 86,
+        fun: 72
+      },
+      {
+        name: "육개장",
+        image: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=80",
+        description: "얼큰하고 진한 소고기 국물",
+        tags: ["국물", "매운맛", "고기"],
+        popularity: 86,
+        spicy: 75,
+        heavy: 62,
+        light: 35,
+        healthy: 60,
+        comfort: 92,
+        fun: 68
+      },
+      {
+        name: "감자탕",
+        image: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=80",
+        description: "푸짐하고 진한 돼지등뼈 요리",
+        tags: ["국물", "고기", "푸짐"],
+        popularity: 83,
+        spicy: 65,
+        heavy: 90,
+        light: 10,
+        healthy: 45,
+        comfort: 92,
+        fun: 88
+      }
+    ]
+  },
+
+
+  chinese: {
+    id: "chinese",
+    name: "중식",
+    icon: "🥟",
+    description: "강렬한 맛의 향연",
+    foods: [
+      {
+        name: "마라탕",
+        image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=900&q=80",
+        description: "얼얼하고 매콤한 중국식 탕요리",
+        tags: ["매운맛", "마라", "국물"],
+        popularity: 97,
+        spicy: 98,
+        heavy: 72,
+        light: 25,
+        healthy: 55,
+        comfort: 70,
+        fun: 98
+      },
+      {
+        name: "마라샹궈",
+        image: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=80",
+        description: "다양한 재료를 마라 소스에 볶은 요리",
+        tags: ["마라", "볶음", "매운맛"],
+        popularity: 94,
+        spicy: 96,
+        heavy: 82,
+        light: 18,
+        healthy: 52,
+        comfort: 68,
+        fun: 98
+      },
+      {
+        name: "짜장면",
+        image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=900&q=80",
+        description: "달콤하고 진한 춘장 소스의 면요리",
+        tags: ["면", "달콤", "국민음식"],
+        popularity: 99,
+        spicy: 5,
+        heavy: 70,
+        light: 25,
+        healthy: 40,
+        comfort: 96,
+        fun: 90
+      },
+      {
+        name: "짬뽕",
+        image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=900&q=80",
+        description: "얼큰한 해산물 국물 면요리",
+        tags: ["면", "국물", "매운맛"],
+        popularity: 97,
+        spicy: 75,
+        heavy: 65,
+        light: 30,
+        healthy: 60,
+        comfort: 92,
+        fun: 88
+      },
+      {
+        name: "탕수육",
+        image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=900&q=80",
+        description: "바삭한 돼지고기와 새콤달콤한 소스",
+        tags: ["튀김", "고기", "달콤"],
+        popularity: 98,
+        spicy: 5,
+        heavy: 85,
+        light: 10,
+        healthy: 35,
+        comfort: 94,
+        fun: 99
+      },
+      {
+        name: "꿔바로우",
+        image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=900&q=80",
+        description: "쫀득하고 새콤달콤한 중국식 탕수육",
+        tags: ["튀김", "고기", "새콤"],
+        popularity: 88,
+        spicy: 5,
+        heavy: 86,
+        light: 12,
+        healthy: 32,
+        comfort: 85,
+        fun: 95
+      },
+      {
+        name: "유린기",
+        image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=900&q=80",
+        description: "바삭한 닭고기와 새콤한 소스",
+        tags: ["닭", "튀김", "새콤"],
+        popularity: 83,
+        spicy: 20,
+        heavy: 75,
+        light: 25,
+        healthy: 42,
+        comfort: 82,
+        fun: 92
+      },
+      {
+        name: "깐풍기",
+        image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=900&q=80",
+        description: "매콤하고 바삭한 중국식 닭요리",
+        tags: ["닭", "매운맛", "튀김"],
+        popularity: 85,
+        spicy: 65,
+        heavy: 82,
+        light: 15,
+        healthy: 38,
+        comfort: 85,
+        fun: 94
+      },
+      {
+        name: "고추잡채",
+        image: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=80",
+        description: "고추와 돼지고기를 볶아낸 요리",
+        tags: ["고기", "채소", "볶음"],
+        popularity: 82,
+        spicy: 50,
+        heavy: 55,
+        light: 40,
+        healthy: 58,
+        comfort: 80,
+        fun: 75
+      },
+      {
+        name: "팔보채",
+        image: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=80",
+        description: "해산물과 채소가 풍성한 중국 요리",
+        tags: ["해산물", "채소", "고급"],
+        popularity: 72,
+        spicy: 15,
+        heavy: 55,
+        light: 45,
+        healthy: 72,
+        comfort: 70,
+        fun: 82
+      },
+      {
+        name: "칠리새우",
+        image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=900&q=80",
+        description: "통통한 새우와 매콤달콤한 소스",
+        tags: ["새우", "매운맛", "달콤"],
+        popularity: 90,
+        spicy: 50,
+        heavy: 65,
+        light: 30,
+        healthy: 60,
+        comfort: 82,
+        fun: 94
+      },
+      {
+        name: "크림새우",
+        image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=900&q=80",
+        description: "바삭한 새우와 부드러운 크림소스",
+        tags: ["새우", "크림", "달콤"],
+        popularity: 87,
+        spicy: 5,
+        heavy: 70,
+        light: 20,
+        healthy: 48,
+        comfort: 88,
+        fun: 94
+      },
+      {
+        name: "마파두부",
+        image: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=80",
+        description: "두부와 다진 고기의 매콤한 조합",
+        tags: ["두부", "매운맛", "밥"],
+        popularity: 86,
+        spicy: 70,
+        heavy: 55,
+        light: 45,
+        healthy: 70,
+        comfort: 85,
+        fun: 78
+      },
+      {
+        name: "동파육",
+        image: "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?auto=format&fit=crop&w=900&q=80",
+        description: "부드럽게 조리한 중국식 돼지고기",
+        tags: ["고기", "진한맛", "고급"],
+        popularity: 75,
+        spicy: 5,
+        heavy: 92,
+        light: 8,
+        healthy: 38,
+        comfort: 85,
+        fun: 75
+      },
+      {
+        name: "어향가지",
+        image: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=80",
+        description: "가지와 매콤달콤한 어향 소스",
+        tags: ["채소", "매운맛", "볶음"],
+        popularity: 76,
+        spicy: 60,
+        heavy: 50,
+        light: 45,
+        healthy: 68,
+        comfort: 78,
+        fun: 80
+      },
+      {
+        name: "딤섬",
+        image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=900&q=80",
+        description: "한입 크기로 즐기는 중국식 만두 요리",
+        tags: ["만두", "간식", "다양"],
+        popularity: 88,
+        spicy: 5,
+        heavy: 45,
+        light: 55,
+        healthy: 55,
+        comfort: 80,
+        fun: 95
+      },
+      {
+        name: "군만두",
+        image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=900&q=80",
+        description: "바삭하게 구워낸 중국식 만두",
+        tags: ["만두", "튀김", "간식"],
+        popularity: 91,
+        spicy: 5,
+        heavy: 55,
+        light: 40,
+        healthy: 42,
+        comfort: 91,
+        fun: 95
+      },
+      {
+        name: "볶음밥",
+        image: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=900&q=80",
+        description: "고슬고슬하게 볶아낸 중국식 볶음밥",
+        tags: ["밥", "볶음", "든든"],
+        popularity: 93,
+        spicy: 10,
+        heavy: 55,
+        light: 45,
+        healthy: 55,
+        comfort: 90,
+        fun: 78
+      },
+      {
+        name: "우육면",
+        image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=900&q=80",
+        description: "진한 소고기 육수의 중국식 면요리",
+        tags: ["면", "국물", "고기"],
+        popularity: 79,
+        spicy: 35,
+        heavy: 62,
+        light: 35,
+        healthy: 58,
+        comfort: 87,
+        fun: 82
+      }
+    ]
+  },
+
+
+  japanese: {
+    id: "japanese",
+    name: "일식",
+    icon: "🍣",
+    description: "깔끔하고 섬세한 맛",
+    foods: [
+      {
+        name: "초밥",
+        image: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=900&q=80",
+        description: "신선한 생선과 밥의 정석",
+        tags: ["생선", "밥", "깔끔"],
+        popularity: 97,
+        spicy: 0,
+        heavy: 35,
+        light: 70,
+        healthy: 85,
+        comfort: 78,
+        fun: 95
+      },
+      {
+        name: "돈카츠",
+        image: "https://images.unsplash.com/photo-1591814468924-caf88d1232e1?auto=format&fit=crop&w=900&q=80",
+        description: "바삭한 튀김옷의 일본식 돈까스",
+        tags: ["돼지고기", "튀김", "든든"],
+        popularity: 96,
+        spicy: 5,
+        heavy: 85,
+        light: 20,
+        healthy: 45,
+        comfort: 95,
+        fun: 92
+      },
+      {
+        name: "라멘",
+        image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=900&q=80",
+        description: "진한 육수와 쫄깃한 면",
+        tags: ["면", "국물", "든든"],
+        popularity: 98,
+        spicy: 30,
+        heavy: 75,
+        light: 20,
+        healthy: 45,
+        comfort: 96,
+        fun: 94
+      },
+      {
+        name: "우동",
+        image: "https://images.unsplash.com/photo-1618841557871-b4664fbf0cb3?auto=format&fit=crop&w=900&q=80",
+        description: "부드럽고 쫄깃한 면과 따뜻한 국물",
+        tags: ["면", "국물", "따뜻"],
+        popularity: 93,
+        spicy: 5,
+        heavy: 55,
+        light: 45,
+        healthy: 60,
+        comfort: 94,
+        fun: 82
+      },
+      {
+        name: "규동",
+        image: "https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?auto=format&fit=crop&w=900&q=80",
+        description: "달콤한 소고기를 밥과 함께",
+        tags: ["소고기", "밥", "달콤"],
+        popularity: 91,
+        spicy: 5,
+        heavy: 70,
+        light: 30,
+        healthy: 55,
+        comfort: 94,
+        fun: 82
+      },
+      {
+        name: "오므라이스",
+        image: "https://images.unsplash.com/photo-1565299507177-b0ac66763828?auto=format&fit=crop&w=900&q=80",
+        description: "부드러운 계란과 볶음밥의 조합",
+        tags: ["계란", "밥", "부드러움"],
+        popularity: 89,
+        spicy: 0,
+        heavy: 55,
+        light: 45,
+        healthy: 60,
+        comfort: 94,
+        fun: 92
+      },
+      {
+        name: "텐동",
+        image: "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?auto=format&fit=crop&w=900&q=80",
+        description: "바삭한 튀김을 밥 위에 올린 덮밥",
+        tags: ["튀김", "밥", "바삭"],
+        popularity: 86,
+        spicy: 0,
+        heavy: 80,
+        light: 20,
+        healthy: 42,
+        comfort: 88,
+        fun: 94
+      },
+      {
+        name: "사시미",
+        image: "https://images.unsplash.com/photo-1534482421-64566f976cfa?auto=format&fit=crop&w=900&q=80",
+        description: "신선한 생선 본연의 맛",
+        tags: ["생선", "회", "깔끔"],
+        popularity: 82,
+        spicy: 0,
+        heavy: 20,
+        light: 90,
+        healthy: 94,
+        comfort: 65,
+        fun: 88
+      }
+    ]
+  },
+
+
+  western: {
+    id: "western",
+    name: "양식",
+    icon: "🍝",
+    description: "파스타부터 스테이크까지",
+    foods: [
+      {
+        name: "토마토 파스타",
+        image: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=900&q=80",
+        description: "상큼한 토마토소스의 클래식 파스타",
+        tags: ["파스타", "토마토", "깔끔"],
+        popularity: 91,
+        spicy: 10,
+        heavy: 55,
+        light: 45,
+        healthy: 68,
+        comfort: 90,
+        fun: 82
+      },
+      {
+        name: "크림 파스타",
+        image: "https://images.unsplash.com/photo-1551892374-ecf8754cf8b0?auto=format&fit=crop&w=900&q=80",
+        description: "부드럽고 진한 크림소스 파스타",
+        tags: ["파스타", "크림", "고소"],
+        popularity: 94,
+        spicy: 5,
+        heavy: 75,
+        light: 25,
+        healthy: 45,
+        comfort: 94,
+        fun: 90
+      },
+      {
+        name: "스테이크",
+        image: "https://images.unsplash.com/photo-1546964124-0cce460f38ef?auto=format&fit=crop&w=900&q=80",
+        description: "육즙 가득한 고급 소고기 요리",
+        tags: ["소고기", "고급", "구이"],
+        popularity: 96,
+        spicy: 5,
+        heavy: 80,
+        light: 20,
+        healthy: 65,
+        comfort: 90,
+        fun: 98
+      },
+      {
+        name: "피자",
+        image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=900&q=80",
+        description: "치즈와 다양한 토핑의 대표 음식",
+        tags: ["치즈", "간식", "파티"],
+        popularity: 99,
+        spicy: 10,
+        heavy: 82,
+        light: 15,
+        healthy: 35,
+        comfort: 96,
+        fun: 100
+      },
+      {
+        name: "리조또",
+        image: "https://images.unsplash.com/photo-1476124369491-e7addf5db371?auto=format&fit=crop&w=900&q=80",
+        description: "부드럽게 조리한 이탈리아식 쌀요리",
+        tags: ["밥", "크림", "부드러움"],
+        popularity: 82,
+        spicy: 5,
+        heavy: 65,
+        light: 35,
+        healthy: 55,
+        comfort: 90,
+        fun: 82
+      },
+      {
+        name: "햄버거",
+        image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=900&q=80",
+        description: "패티와 다양한 토핑을 즐기는 음식",
+        tags: ["패스트푸드", "고기", "간편"],
+        popularity: 99,
+        spicy: 15,
+        heavy: 85,
+        light: 10,
+        healthy: 30,
+        comfort: 95,
+        fun: 100
+      }
+    ]
+  },
+
+
+  snack: {
+    id: "snack",
+    name: "분식",
+    icon: "🍢",
+    description: "가볍고 맛있는 국민 간식",
+    foods: [
+      {
+        name: "떡볶이",
+        image: "https://images.unsplash.com/photo-1635363638580-c2809d049eee?auto=format&fit=crop&w=900&q=80",
+        description: "매콤달콤한 국민 간식",
+        tags: ["떡", "매운맛", "간식"],
+        popularity: 99,
+        spicy: 78,
+        heavy: 55,
+        light: 40,
+        healthy: 40,
+        comfort: 95,
+        fun: 100
+      },
+      {
+        name: "순대",
+        image: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=80",
+        description: "쫄깃한 식감의 대표 분식",
+        tags: ["간식", "쫄깃", "시장"],
+        popularity: 90,
+        spicy: 10,
+        heavy: 50,
+        light: 45,
+        healthy: 45,
+        comfort: 88,
+        fun: 90
+      },
+      {
+        name: "튀김",
+        image: "https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?auto=format&fit=crop&w=900&q=80",
+        description: "바삭하게 튀겨낸 다양한 간식",
+        tags: ["튀김", "바삭", "간식"],
+        popularity: 94,
+        spicy: 5,
+        heavy: 65,
+        light: 20,
+        healthy: 25,
+        comfort: 90,
+        fun: 98
+      },
+      {
+        name: "라볶이",
+        image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=900&q=80",
+        description: "떡볶이에 라면을 더한 강력한 조합",
+        tags: ["면", "떡", "매운맛"],
+        popularity: 94,
+        spicy: 75,
+        heavy: 68,
+        light: 25,
+        healthy: 35,
+        comfort: 96,
+        fun: 100
+      },
+      {
+        name: "어묵",
+        image: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=80",
+        description: "따뜻한 국물과 함께 즐기는 간식",
+        tags: ["국물", "간식", "따뜻"],
+        popularity: 89,
+        spicy: 5,
+        heavy: 25,
+        light: 70,
+        healthy: 48,
+        comfort: 95,
+        fun: 85
+      },
+      {
+        name: "김밥",
+        image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=900&q=80",
+        description: "언제 먹어도 편안한 국민 음식",
+        tags: ["밥", "간편", "간식"],
+        popularity: 96,
+        spicy: 15,
+        heavy: 40,
+        light: 60,
+        healthy: 65,
+        comfort: 95,
+        fun: 92
+      }
+    ]
+  },
+
+
+  chicken: {
+    id: "chicken",
+    name: "치킨",
+    icon: "🍗",
+    description: "치킨은 언제나 옳다",
+    foods: [
+      {
+        name: "후라이드 치킨",
+        image: "https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?auto=format&fit=crop&w=900&q=80",
+        description: "바삭한 튀김옷과 담백한 닭고기",
+        tags: ["바삭", "기본", "국민치킨"],
+        popularity: 99,
+        spicy: 5,
+        heavy: 80,
+        light: 10,
+        healthy: 30,
+        comfort: 98,
+        fun: 100
+      },
+      {
+        name: "양념치킨",
+        image: "https://images.unsplash.com/photo-1527477396000-e27163b481c2?auto=format&fit=crop&w=900&q=80",
+        description: "달콤매콤한 양념의 대표 치킨",
+        tags: ["매운맛", "달콤", "치킨"],
+        popularity: 99,
+        spicy: 45,
+        heavy: 85,
+        light: 10,
+        healthy: 25,
+        comfort: 99,
+        fun: 100
+      },
+      {
+        name: "간장치킨",
+        image: "https://images.unsplash.com/photo-1569058242272-89e8e7a7e5b5?auto=format&fit=crop&w=900&q=80",
+        description: "짭짤하고 달콤한 간장 소스 치킨",
+        tags: ["간장", "달콤", "바삭"],
+        popularity: 94,
+        spicy: 10,
+        heavy: 82,
+        light: 12,
+        healthy: 28,
+        comfort: 95,
+        fun: 98
+      },
+      {
+        name: "닭강정",
+        image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=900&q=80",
+        description: "한입 크기로 즐기는 달콤한 닭요리",
+        tags: ["한입", "달콤", "바삭"],
+        popularity: 92,
+        spicy: 30,
+        heavy: 75,
+        light: 15,
+        healthy: 30,
+        comfort: 92,
+        fun: 100
+      },
+      {
+        name: "치킨윙",
+        image: "https://images.unsplash.com/photo-1527477396000-e27163b481c2?auto=format&fit=crop&w=900&q=80",
+        description: "손으로 뜯어 먹는 재미있는 치킨",
+        tags: ["윙", "간식", "파티"],
+        popularity: 90,
+        spicy: 25,
+        heavy: 72,
+        light: 15,
+        healthy: 32,
+        comfort: 88,
+        fun: 100
+      }
+    ]
+  },
+
+
+  burger: {
+    id: "burger",
+    name: "햄버거",
+    icon: "🍔",
+    description: "한 손으로 즐기는 완벽한 한 끼",
+    foods: [
+      {
+        name: "치즈버거",
+        image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=900&q=80",
+        description: "패티와 치즈의 가장 클래식한 조합",
+        tags: ["치즈", "패티", "클래식"],
+        popularity: 99,
+        spicy: 5,
+        heavy: 80,
+        light: 10,
+        healthy: 30,
+        comfort: 98,
+        fun: 100
+      },
+      {
+        name: "불고기버거",
+        image: "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=900&q=80",
+        description: "한국적인 달콤한 소스의 버거",
+        tags: ["불고기", "달콤", "한국식"],
+        popularity: 94,
+        spicy: 5,
+        heavy: 65,
+        light: 20,
+        healthy: 35,
+        comfort: 94,
+        fun: 94
+      },
+      {
+        name: "치킨버거",
+        image: "https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=900&q=80",
+        description: "바삭한 치킨 패티의 든든한 버거",
+        tags: ["치킨", "바삭", "든든"],
+        popularity: 96,
+        spicy: 25,
+        heavy: 78,
+        light: 15,
+        healthy: 35,
+        comfort: 96,
+        fun: 100
+      },
+      {
+        name: "새우버거",
+        image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=900&q=80",
+        description: "탱글한 새우 패티와 부드러운 소스",
+        tags: ["새우", "해산물", "부드러움"],
+        popularity: 90,
+        spicy: 10,
+        heavy: 60,
+        light: 25,
+        healthy: 45,
+        comfort: 90,
+        fun: 95
+      },
+      {
+        name: "더블버거",
+        image: "https://images.unsplash.com/photo-1553979459-d2229ba7433b?auto=format&fit=crop&w=900&q=80",
+        description: "패티를 두 장 넣은 극강의 든든함",
+        tags: ["고기", "대용량", "든든"],
+        popularity: 92,
+        spicy: 5,
+        heavy: 98,
+        light: 3,
+        healthy: 20,
+        comfort: 95,
+        fun: 100
+      }
+    ]
+  },
+
+
+  mexican: {
+    id: "mexican",
+    name: "멕시칸",
+    icon: "🌮",
+    description: "톡 쏘는 이국적인 맛",
+    foods: [
+      {
+        name: "타코",
+        image: "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?auto=format&fit=crop&w=900&q=80",
+        description: "또띠아에 다양한 재료를 담아 먹는 음식",
+        tags: ["또띠아", "고기", "이국적"],
+        popularity: 88,
+        spicy: 45,
+        heavy: 50,
+        light: 45,
+        healthy: 60,
+        comfort: 78,
+        fun: 98
+      },
+      {
+        name: "부리또",
+        image: "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=900&q=80",
+        description: "속재료를 듬뿍 넣은 멕시칸 랩",
+        tags: ["랩", "밥", "든든"],
+        popularity: 85,
+        spicy: 35,
+        heavy: 75,
+        light: 20,
+        healthy: 55,
+        comfort: 88,
+        fun: 92
+      },
+      {
+        name: "퀘사디아",
+        image: "https://images.unsplash.com/photo-1618040996337-56904b7850b9?auto=format&fit=crop&w=900&q=80",
+        description: "치즈와 다양한 재료를 또띠아에 구운 요리",
+        tags: ["치즈", "또띠아", "바삭"],
+        popularity: 82,
+        spicy: 20,
+        heavy: 65,
+        light: 30,
+        healthy: 45,
+        comfort: 90,
+        fun: 95
+      },
+      {
+        name: "나초",
+        image: "https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?auto=format&fit=crop&w=900&q=80",
+        description: "바삭한 칩과 치즈의 대표 간식",
+        tags: ["간식", "치즈", "파티"],
+        popularity: 86,
+        spicy: 30,
+        heavy: 55,
+        light: 25,
+        healthy: 25,
+        comfort: 88,
+        fun: 100
+      },
+      {
+        name: "엔칠라다",
+        image: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=900&q=80",
+        description: "소스와 치즈를 곁들인 멕시칸 요리",
+        tags: ["치즈", "소스", "오븐"],
+        popularity: 72,
+        spicy: 40,
+        heavy: 70,
+        light: 20,
+        healthy: 40,
+        comfort: 84,
+        fun: 88
+      }
+    ]
+  },
+
+
+  vietnamese: {
+    id: "vietnamese",
+    name: "베트남",
+    icon: "🍜",
+    description: "깔끔하고 향긋한 동남아 음식",
+    foods: [
+      {
+        name: "쌀국수",
+        image: "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?auto=format&fit=crop&w=900&q=80",
+        description: "깔끔한 육수와 쌀면의 조합",
+        tags: ["면", "국물", "깔끔"],
+        popularity: 96,
+        spicy: 15,
+        heavy: 35,
+        light: 70,
+        healthy: 80,
+        comfort: 90,
+        fun: 88
+      },
+      {
+        name: "분짜",
+        image: "https://images.unsplash.com/photo-1559314809-0d155014e29e?auto=format&fit=crop&w=900&q=80",
+        description: "숯불 돼지고기와 쌀면의 조합",
+        tags: ["돼지고기", "면", "새콤"],
+        popularity: 84,
+        spicy: 15,
+        heavy: 45,
+        light: 55,
+        healthy: 72,
+        comfort: 82,
+        fun: 90
+      },
+      {
+        name: "반미",
+        image: "https://images.unsplash.com/photo-1601050690117-94f5f6fa8bd7?auto=format&fit=crop&w=900&q=80",
+        description: "바삭한 바게트에 다양한 속재료를 넣은 샌드위치",
+        tags: ["빵", "샌드위치", "간편"],
+        popularity: 88,
+        spicy: 20,
+        heavy: 50,
+        light: 50,
+        healthy: 62,
+        comfort: 86,
+        fun: 95
+      },
+      {
+        name: "월남쌈",
+        image: "https://images.unsplash.com/photo-1559314809-0d155014e29e?auto=format&fit=crop&w=900&q=80",
+        description: "채소와 고기를 라이스페이퍼에 싸 먹는 음식",
+        tags: ["채소", "건강", "가벼움"],
+        popularity: 83,
+        spicy: 5,
+        heavy: 25,
+        light: 90,
+        healthy: 94,
+        comfort: 72,
+        fun: 95
+      }
+    ]
+  },
+
+
+  thai: {
+    id: "thai",
+    name: "태국",
+    icon: "🍛",
+    description: "매콤새콤달콤한 맛의 조화",
+    foods: [
+      {
+        name: "팟타이",
+        image: "https://images.unsplash.com/photo-1559314809-0d155014e29e?auto=format&fit=crop&w=900&q=80",
+        description: "달콤새콤한 태국식 볶음 쌀국수",
+        tags: ["면", "볶음", "새콤"],
+        popularity: 94,
+        spicy: 30,
+        heavy: 55,
+        light: 40,
+        healthy: 55,
+        comfort: 88,
+        fun: 95
+      },
+      {
+        name: "똠얌꿍",
+        image: "https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?auto=format&fit=crop&w=900&q=80",
+        description: "새콤매콤한 태국식 새우 수프",
+        tags: ["국물", "새우", "매운맛"],
+        popularity: 88,
+        spicy: 65,
+        heavy: 35,
+        light: 65,
+        healthy: 78,
+        comfort: 75,
+        fun: 95
+      },
+      {
+        name: "카오팟",
+        image: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=900&q=80",
+        description: "고슬고슬한 태국식 볶음밥",
+        tags: ["밥", "볶음", "든든"],
+        popularity: 82,
+        spicy: 15,
+        heavy: 55,
+        light: 40,
+        healthy: 55,
+        comfort: 88,
+        fun: 82
+      },
+      {
+        name: "그린커리",
+        image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=900&q=80",
+        description: "향긋하고 부드러운 태국식 커리",
+        tags: ["커리", "코코넛", "향신료"],
+        popularity: 86,
+        spicy: 55,
+        heavy: 65,
+        light: 30,
+        healthy: 65,
+        comfort: 85,
+        fun: 90
+      },
+      {
+        name: "망고스틴 디저트",
+        image: "https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=900&q=80",
+        description: "달콤한 과일을 활용한 가벼운 디저트",
+        tags: ["디저트", "과일", "달콤"],
+        popularity: 70,
+        spicy: 0,
+        heavy: 15,
+        light: 95,
+        healthy: 75,
+        comfort: 72,
+        fun: 90
+      }
+    ]
+  },
+
+
+  indian: {
+    id: "indian",
+    name: "인도",
+    icon: "🍛",
+    description: "향신료가 만드는 깊은 맛",
+    foods: [
+      {
+        name: "버터치킨",
+        image: "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&w=900&q=80",
+        description: "부드러운 치킨과 진한 커리소스",
+        tags: ["치킨", "커리", "부드러움"],
+        popularity: 94,
+        spicy: 35,
+        heavy: 65,
+        light: 30,
+        healthy: 55,
+        comfort: 94,
+        fun: 90
+      },
+      {
+        name: "치킨 티카 마살라",
+        image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=900&q=80",
+        description: "향신료와 토마토소스의 진한 치킨 요리",
+        tags: ["치킨", "향신료", "커리"],
+        popularity: 90,
+        spicy: 50,
+        heavy: 65,
+        light: 30,
+        healthy: 58,
+        comfort: 90,
+        fun: 94
+      },
+      {
+        name: "난",
+        image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=900&q=80",
+        description: "커리와 함께 먹는 인도식 빵",
+        tags: ["빵", "커리", "탄수화물"],
+        popularity: 92,
+        spicy: 0,
+        heavy: 45,
+        light: 45,
+        healthy: 50,
+        comfort: 90,
+        fun: 88
+      },
+      {
+        name: "사모사",
+        image: "https://images.unsplash.com/photo-1601050690117-94f5f6fa8bd7?auto=format&fit=crop&w=900&q=80",
+        description: "바삭한 껍질 속에 향신료 가득한 속재료",
+        tags: ["튀김", "간식", "향신료"],
+        popularity: 82,
+        spicy: 35,
+        heavy: 55,
+        light: 30,
+        healthy: 42,
+        comfort: 84,
+        fun: 94
+      },
+      {
+        name: "팔락 파니르",
+        image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=900&q=80",
+        description: "시금치와 인도식 치즈를 활용한 커리",
+        tags: ["채소", "치즈", "커리"],
+        popularity: 75,
+        spicy: 30,
+        heavy: 45,
+        light: 50,
+        healthy: 82,
+        comfort: 80,
+        fun: 82
+      }
+    ]
+  },
+
+
+  healthy: {
+    id: "healthy",
+    name: "건강식",
+    icon: "🥗",
+    description: "가볍고 산뜻하게",
+    foods: [
+      {
+        name: "샐러드",
+        image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=900&q=80",
+        description: "신선한 채소를 듬뿍 담은 샐러드",
+        tags: ["채소", "가벼움", "건강"],
+        popularity: 88,
+        spicy: 0,
+        heavy: 15,
+        light: 98,
+        healthy: 98,
+        comfort: 55,
+        fun: 70
+      },
+      {
+        name: "포케",
+        image: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=80",
+        description: "밥과 생선, 채소를 함께 즐기는 한 그릇",
+        tags: ["생선", "밥", "건강"],
+        popularity: 91,
+        spicy: 15,
+        heavy: 35,
+        light: 75,
+        healthy: 94,
+        comfort: 70,
+        fun: 88
+      },
+      {
+        name: "닭가슴살 샐러드",
+        image: "https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=900&q=80",
+        description: "단백질과 채소를 균형 있게",
+        tags: ["단백질", "채소", "다이어트"],
+        popularity: 84,
+        spicy: 0,
+        heavy: 25,
+        light: 92,
+        healthy: 99,
+        comfort: 55,
+        fun: 65
+      },
+      {
+        name: "연어 샐러드",
+        image: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=900&q=80",
+        description: "고소한 연어와 신선한 채소",
+        tags: ["연어", "채소", "오메가3"],
+        popularity: 87,
+        spicy: 0,
+        heavy: 30,
+        light: 88,
+        healthy: 98,
+        comfort: 68,
+        fun: 78
+      },
+      {
+        name: "닭가슴살 덮밥",
+        image: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=80",
+        description: "담백한 닭고기와 밥을 함께",
+        tags: ["닭", "밥", "단백질"],
+        popularity: 86,
+        spicy: 10,
+        heavy: 40,
+        light: 65,
+        healthy: 90,
+        comfort: 78,
+        fun: 72
+      }
+    ]
+  },
+
+
+  noodle: {
+    id: "noodle",
+    name: "면요리",
+    icon: "🍜",
+    description: "오늘은 면치기",
+    foods: [
+      {
+        name: "라면",
+        image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=900&q=80",
+        description: "언제 먹어도 생각나는 국민 면요리",
+        tags: ["면", "국물", "간편"],
+        popularity: 100,
+        spicy: 65,
+        heavy: 55,
+        light: 30,
+        healthy: 30,
+        comfort: 100,
+        fun: 98
+      },
+      {
+        name: "냉면",
+        image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=900&q=80",
+        description: "시원하고 깔끔한 면요리",
+        tags: ["면", "시원", "여름"],
+        popularity: 92,
+        spicy: 30,
+        heavy: 30,
+        light: 80,
+        healthy: 60,
+        comfort: 82,
+        fun: 90
+      },
+      {
+        name: "우동",
+        image: "https://images.unsplash.com/photo-1618841557871-b4664fbf0cb3?auto=format&fit=crop&w=900&q=80",
+        description: "따뜻하고 부드러운 일본식 면",
+        tags: ["면", "국물", "따뜻"],
+        popularity: 90,
+        spicy: 5,
+        heavy: 45,
+        light: 50,
+        healthy: 60,
+        comfort: 94,
+        fun: 82
+      },
+      {
+        name: "파스타",
+        image: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=900&q=80",
+        description: "소스에 따라 무한히 변하는 면요리",
+        tags: ["파스타", "소스", "다양"],
+        popularity: 96,
+        spicy: 15,
+        heavy: 60,
+        light: 35,
+        healthy: 55,
+        comfort: 92,
+        fun: 94
+      },
+      {
+        name: "쌀국수",
+        image: "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?auto=format&fit=crop&w=900&q=80",
+        description: "깔끔한 육수와 쌀면",
+        tags: ["면", "국물", "깔끔"],
+        popularity: 94,
+        spicy: 10,
+        heavy: 30,
+        light: 78,
+        healthy: 82,
+        comfort: 88,
+        fun: 90
+      },
+      {
+        name: "짜장면",
+        image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=900&q=80",
+        description: "달콤하고 진한 춘장 면요리",
+        tags: ["면", "달콤", "중식"],
+        popularity: 99,
+        spicy: 5,
+        heavy: 72,
+        light: 20,
+        healthy: 35,
+        comfort: 98,
+        fun: 94
+      },
+      {
+        name: "짬뽕",
+        image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=900&q=80",
+        description: "얼큰하고 시원한 해산물 면요리",
+        tags: ["면", "매운맛", "국물"],
+        popularity: 97,
+        spicy: 75,
+        heavy: 65,
+        light: 30,
+        healthy: 58,
+        comfort: 95,
+        fun: 92
+      }
+    ]
+  },
+
+
+  night: {
+    id: "night",
+    name: "야식",
+    icon: "🌙",
+    description: "밤에 먹으면 더 맛있는 음식",
+    foods: [
+      {
+        name: "치킨",
+        image: "https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?auto=format&fit=crop&w=900&q=80",
+        description: "야식의 영원한 강자",
+        tags: ["치킨", "야식", "파티"],
+        popularity: 100,
+        spicy: 35,
+        heavy: 85,
+        light: 5,
+        healthy: 20,
+        comfort: 100,
+        fun: 100
+      },
+      {
+        name: "족발",
+        image: "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?auto=format&fit=crop&w=900&q=80",
+        description: "쫄깃한 식감과 담백한 고기",
+        tags: ["고기", "야식", "술안주"],
+        popularity: 93,
+        spicy: 15,
+        heavy: 80,
+        light: 15,
+        healthy: 50,
+        comfort: 95,
+        fun: 98
+      },
+      {
+        name: "피자",
+        image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=900&q=80",
+        description: "밤에 보면 더 강력한 치즈와 토핑",
+        tags: ["치즈", "야식", "파티"],
+        popularity: 98,
+        spicy: 10,
+        heavy: 85,
+        light: 10,
+        healthy: 25,
+        comfort: 98,
+        fun: 100
+      },
+      {
+        name: "떡볶이",
+        image: "https://images.unsplash.com/photo-1635363638580-c2809d049eee?auto=format&fit=crop&w=900&q=80",
+        description: "매콤한 야식의 대표",
+        tags: ["매운맛", "떡", "간식"],
+        popularity: 98,
+        spicy: 80,
+        heavy: 55,
+        light: 30,
+        healthy: 35,
+        comfort: 95,
+        fun: 100
+      },
+      {
+        name: "라면",
+        image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=900&q=80",
+        description: "새벽에 가장 위험한 선택",
+        tags: ["면", "국물", "새벽"],
+        popularity: 100,
+        spicy: 65,
+        heavy: 60,
+        light: 20,
+        healthy: 25,
+        comfort: 100,
+        fun: 100
+      },
+      {
+        name: "닭발",
+        image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=900&q=80",
+        description: "매운맛으로 스트레스를 날리는 야식",
+        tags: ["매운맛", "닭", "술안주"],
+        popularity: 82,
+        spicy: 98,
+        heavy: 60,
+        light: 25,
+        healthy: 40,
+        comfort: 80,
+        fun: 100
+      }
+    ]
+  }
+
+};
+
+
+const DECISION_STYLES = [
+  {
+    id: "judge",
+    icon: "⚖️",
+    name: "냉정한 판사",
+    description: "감정은 배제한다. 오직 점수와 근거로 판단.",
+    color: "purple"
+  },
+  {
+    id: "friend",
+    icon: "😎",
+    name: "친구처럼 추천",
+    description: "오늘 분위기와 먹고 싶은 느낌을 보고 추천.",
+    color: "blue"
+  },
+  {
+    id: "parent",
+    icon: "👨‍👩‍👦",
+    name: "부모님처럼 추천",
+    description: "든든하고 따뜻하고 실패 없는 선택.",
+    color: "green"
+  },
+  {
+    id: "fortune",
+    icon: "🔮",
+    name: "점쟁이처럼 추천",
+    description: "오늘의 운과 재미를 기준으로 결정.",
+    color: "pink"
+  },
+  {
+    id: "logic",
+    icon: "🧠",
+    name: "극도로 논리적인 AI",
+    description: "모든 데이터를 계산해서 가장 합리적인 결과를 도출.",
+    color: "cyan"
+  },
+  {
+    id: "random",
+    icon: "🎲",
+    name: "아무 생각 없는 랜덤봇",
+    description: "복잡한 건 싫다. 그냥 운명에 맡긴다.",
+    color: "orange"
+  }
+];
+const DecisionEngine = {
+
+  styleInfo: {
+    judge: {
+      title: "냉정한 판사",
+      messages: [
+        "감정을 배제하고 객관적으로 심사합니다.",
+        "인기도와 만족도를 비교하는 중입니다.",
+        "장단점을 냉정하게 평가하고 있습니다.",
+        "변명의 여지가 없는 후보를 제거합니다."
+      ]
+    },
+
+    friend: {
+      title: "친구처럼 추천",
+      messages: [
+        "오늘 기분이 어떤지 생각해보는 중...",
+        "야 이건 좀 땡기는데?",
+        "오늘 먹으면 기분 좋을 후보를 찾는 중!",
+        "친구라면 이걸 추천할 것 같은데?"
+      ]
+    },
+
+    parent: {
+      title: "부모님처럼 추천",
+      messages: [
+        "밥은 든든하게 먹어야지.",
+        "너무 자극적인 음식은 잠시 내려놓고...",
+        "그래도 맛있고 든든한 걸 골라보자.",
+        "오늘 하루 고생했으니까 제대로 먹자."
+      ]
+    },
+
+    fortune: {
+      title: "점쟁이처럼 추천",
+      messages: [
+        "오늘의 음식 운을 살펴보는 중...",
+        "음식의 기운이 움직이고 있습니다...",
+        "이상하게 계속 눈에 밟히는 음식이 있군요.",
+        "오늘 당신과 인연이 있는 음식을 찾았습니다."
+      ]
+    },
+
+    logic: {
+      title: "극도로 논리적인 AI",
+      messages: [
+        "다중 변수 분석을 시작합니다.",
+        "후보별 점수 벡터를 계산합니다.",
+        "상대적 만족도를 비교합니다.",
+        "최적화된 결과를 산출합니다."
+      ]
+    },
+
+    random: {
+      title: "아무 생각 없는 랜덤봇",
+      messages: [
+        "음...",
+        "몰라.",
+        "그냥 골라볼게.",
+        "운명에게 맡긴다.",
+        "이유는 없음."
+      ]
+    }
+  },
+
+
+  shuffle(array) {
+    return [...array].sort(() => Math.random() - 0.5);
+  },
+
+
+  clamp(value) {
+    return Math.max(0, Math.min(100, value));
+  },
+
+
+  randomBonus() {
+    return Math.random() * 20;
+  },
+
+
+  calculateScore(food, style) {
+
+    let score = 0;
+
+    switch (style) {
+
+      // 냉정한 판사
+      case "judge":
+        score =
+          food.popularity * 0.25 +
+          food.comfort * 0.20 +
+          food.healthy * 0.15 +
+          (100 - food.heavy) * 0.10 +
+          food.fun * 0.10 +
+          (100 - food.spicy) * 0.05 +
+          food.light * 0.15;
+        break;
+
+
+      // 친구
+      case "friend":
+        score =
+          food.fun * 0.30 +
+          food.popularity * 0.20 +
+          food.comfort * 0.20 +
+          food.spicy * 0.10 +
+          food.heavy * 0.10 +
+          this.randomBonus() * 0.10;
+        break;
+
+
+      // 부모님
+      case "parent":
+        score =
+          food.comfort * 0.30 +
+          food.healthy * 0.25 +
+          food.popularity * 0.15 +
+          (100 - food.spicy) * 0.10 +
+          (100 - food.heavy) * 0.10 +
+          food.light * 0.10;
+        break;
+
+
+      // 점쟁이
+      case "fortune":
+        score =
+          this.randomBonus() * 2 +
+          food.fun * 0.20 +
+          food.popularity * 0.15 +
+          food.comfort * 0.15 +
+          food.spicy * 0.10 +
+          food.healthy * 0.10;
+        break;
+
+
+      // 극도로 논리적인 AI
+      case "logic":
+        score =
+          food.popularity * 0.20 +
+          food.healthy * 0.20 +
+          food.comfort * 0.20 +
+          food.fun * 0.10 +
+          food.light * 0.10 +
+          (100 - food.heavy) * 0.10 +
+          (100 - food.spicy) * 0.10;
+        break;
+
+
+      // 랜덤봇
+      case "random":
+        score = Math.random() * 100;
+        break;
+    }
+
+    return Math.round(this.clamp(score) * 10) / 10;
+  },
+
+
+  evaluateFoods(foods, style) {
+
+    return foods.map(food => ({
+      ...food,
+      score: this.calculateScore(food, style)
+    }));
+
+  },
+
+
+  eliminate(foods, targetCount, style) {
+
+    const evaluated = this.evaluateFoods(foods, style);
+
+    evaluated.sort((a, b) => b.score - a.score);
+
+    const survivors = evaluated.slice(0, targetCount);
+    const eliminated = evaluated.slice(targetCount);
+
+    return {
+      survivors,
+      eliminated
+    };
+
+  },
+
+
+  analyze(foods, style) {
+
+    let current = this.shuffle(foods);
+
+    const stage1 = this.eliminate(
+      current,
+      Math.min(10, current.length),
+      style
+    );
+
+    const stage2 = this.eliminate(
+      stage1.survivors,
+      Math.min(5, stage1.survivors.length),
+      style
+    );
+
+    const stage3 = this.eliminate(
+      stage2.survivors,
+      Math.min(3, stage2.survivors.length),
+      style
+    );
+
+    const ranking = [...stage3.survivors]
+      .sort((a, b) => b.score - a.score);
+
+    return {
+      original: current,
+      stages: [
+        {
+          name: "1차 분석",
+          before: current,
+          eliminated: stage1.eliminated,
+          survivors: stage1.survivors
+        },
+        {
+          name: "2차 분석",
+          before: stage1.survivors,
+          eliminated: stage2.eliminated,
+          survivors: stage2.survivors
+        },
+        {
+          name: "최종 심사",
+          before: stage2.survivors,
+          eliminated: stage3.eliminated,
+          survivors: stage3.survivors
+        }
+      ],
+      top3: ranking
+    };
+
+  },
+
+
+  getReason(food, style, rank) {
+
+    const reasons = {
+
+      judge: [
+        `${food.name}은 객관적인 종합 점수에서 높은 평가를 받았습니다.`,
+        `인기도와 만족도에서 안정적인 점수를 기록했습니다.`,
+        `다른 후보보다 전체적인 균형이 좋았습니다.`
+      ],
+
+      friend: [
+        `오늘 그냥 이게 제일 땡길 것 같은데?`,
+        `친구 입장에서 봐도 이건 꽤 괜찮은 선택이야.`,
+        `오늘 분위기에는 ${food.name}이 딱 어울려.`
+      ],
+
+      parent: [
+        `오늘은 든든하게 먹는 게 좋겠어.`,
+        `너무 자극적이지 않으면서 만족감이 좋은 음식이야.`,
+        `하루 한 끼 제대로 먹는다는 생각으로 추천했어.`
+      ],
+
+      fortune: [
+        `오늘 이상하게 ${food.name}과의 인연이 강하게 들어왔습니다.`,
+        `음식의 기운이 묘하게 이쪽으로 흐르고 있습니다.`,
+        `오늘은 이 음식을 먹으면 좋은 일이 생길지도 모릅니다.`
+      ],
+
+      logic: [
+        `다중 변수 분석 결과 높은 종합 효율을 기록했습니다.`,
+        `인기도, 만족도, 건강성 등의 균형이 우수합니다.`,
+        `후보군 내 상대 평가에서 높은 최적화 점수를 기록했습니다.`
+      ],
+
+      random: [
+        `그냥 뽑혔습니다.`,
+        `왜냐고? 나도 몰라.`,
+        `오늘은 ${food.name}의 운명입니다.`
+      ]
+
+    };
+
+    const list = reasons[style] || reasons.logic;
+
+    return list[
+      (rank - 1 + Math.floor(food.score)) % list.length
+    ];
+  },
+
+
+  getEliminationReason(food, style) {
+
+    if (style === "judge") {
+      return `종합 평가 ${food.score}점으로 기준 미달`;
+    }
+
+    if (style === "friend") {
+      return `오늘의 분위기와 조금 안 맞음`;
+    }
+
+    if (style === "parent") {
+      return `든든함과 편안함에서 경쟁 후보에게 밀림`;
+    }
+
+    if (style === "fortune") {
+      return `오늘의 음식 운이 조금 부족함`;
+    }
+
+    if (style === "logic") {
+      return `다중 변수 최적화 결과 상위 후보에서 제외`;
+    }
+
+    return `그냥 탈락. 특별한 이유 없음.`;
+  }
+
+};
