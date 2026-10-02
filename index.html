@@ -1,0 +1,1615 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>오늘 뭐 먹지?</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800;900&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background:
+        radial-gradient(circle at 20% 10%, rgba(255,100,50,.18), transparent 30%),
+        radial-gradient(circle at 80% 20%, rgba(100,80,255,.15), transparent 30%),
+        #08080c;
+    color: white;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+button {
+    font-family: inherit;
+}
+
+.container {
+    width: min(1200px, 92%);
+    margin: auto;
+}
+
+/* HEADER */
+
+header {
+    padding: 30px 0;
+    text-align: center;
+}
+
+.logo {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    color: #ff7a45;
+}
+
+.header-title {
+    margin-top: 35px;
+    font-size: clamp(38px, 7vw, 72px);
+    font-weight: 900;
+    letter-spacing: -4px;
+}
+
+.header-title span {
+    background: linear-gradient(90deg,#ff7043,#ffb347);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.subtitle {
+    margin-top: 15px;
+    color: #999;
+    font-size: 16px;
+}
+
+/* PROGRESS */
+
+.progress {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin: 35px 0;
+}
+
+.progress-step {
+    width: 100px;
+    height: 5px;
+    background: #29292f;
+    border-radius: 10px;
+    transition: .4s;
+}
+
+.progress-step.active {
+    background: linear-gradient(90deg,#ff643d,#ffb347);
+    box-shadow: 0 0 15px rgba(255,100,60,.5);
+}
+
+/* SCREENS */
+
+.screen {
+    display: none;
+    animation: screenIn .5s ease;
+}
+
+.screen.active {
+    display: block;
+}
+
+@keyframes screenIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.section-title {
+    text-align: center;
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.section-desc {
+    text-align: center;
+    color: #888;
+    margin-bottom: 35px;
+}
+
+/* CATEGORY */
+
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 18px;
+}
+
+.category-card {
+    position: relative;
+    min-height: 230px;
+    border-radius: 24px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,.08);
+    background: #15151b;
+    transition: .35s;
+}
+
+.category-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    border-color: rgba(255,120,70,.7);
+    box-shadow: 0 20px 60px rgba(0,0,0,.5);
+}
+
+.category-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    inset: 0;
+    transition: .5s;
+}
+
+.category-card:hover img {
+    transform: scale(1.08);
+}
+
+.category-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        transparent 20%,
+        rgba(0,0,0,.9) 100%
+    );
+}
+
+.category-name {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    font-size: 25px;
+    font-weight: 900;
+}
+
+/* STYLE */
+
+.style-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 18px;
+}
+
+.style-card {
+    padding: 28px;
+    min-height: 190px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 24px;
+    cursor: pointer;
+    transition: .3s;
+    backdrop-filter: blur(15px);
+}
+
+.style-card:hover {
+    transform: translateY(-6px);
+    border-color: #ff7448;
+    background: rgba(255,100,60,.08);
+}
+
+.style-icon {
+    font-size: 38px;
+    margin-bottom: 18px;
+}
+
+.style-name {
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.style-desc {
+    color: #999;
+    line-height: 1.6;
+    font-size: 14px;
+}
+
+/* ANALYSIS */
+
+.analysis-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.ai-badge {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 50px;
+    background: rgba(255,100,60,.12);
+    color: #ff895e;
+    font-size: 13px;
+    margin-bottom: 15px;
+}
+
+.analysis-title {
+    font-size: 34px;
+    font-weight: 900;
+}
+
+.analysis-status {
+    color: #888;
+    margin-top: 10px;
+}
+
+.analysis-box {
+    padding: 25px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 25px;
+    margin-bottom: 25px;
+}
+
+.analysis-bar {
+    height: 8px;
+    background: #27272d;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.analysis-progress {
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg,#ff603b,#ffb347);
+    transition: width .5s;
+}
+
+.analysis-stage {
+    margin-top: 14px;
+    color: #aaa;
+    font-size: 14px;
+}
+
+.food-grid {
+    display: grid;
+    grid-template-columns: repeat(5,1fr);
+    gap: 12px;
+}
+
+.food-card {
+    background: #15151a;
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: .5s;
+}
+
+.food-card img {
+    width: 100%;
+    height: 130px;
+    object-fit: cover;
+}
+
+.food-info {
+    padding: 12px;
+}
+
+.food-name {
+    font-weight: 800;
+    font-size: 14px;
+}
+
+.food-score {
+    margin-top: 5px;
+    font-size: 12px;
+    color: #ff895e;
+}
+
+.food-card.eliminated {
+    opacity: .12;
+    transform: scale(.85);
+    filter: grayscale(1);
+}
+
+/* RESULT */
+
+.result-header {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.result-label {
+    color: #ff865b;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.result-title {
+    font-size: clamp(40px,7vw,70px);
+    font-weight: 900;
+    margin-top: 8px;
+}
+
+.top3 {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 20px;
+    align-items: end;
+}
+
+.result-card {
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 28px;
+    overflow: hidden;
+    animation: resultIn .7s ease;
+}
+
+@keyframes resultIn {
+    from {
+        opacity: 0;
+        transform: translateY(40px) scale(.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.result-card.first {
+    border: 2px solid #ff774c;
+    box-shadow: 0 0 50px rgba(255,100,60,.18);
+    transform: scale(1.04);
+}
+
+.result-rank {
+    padding: 12px 18px;
+    font-size: 13px;
+    font-weight: 900;
+    color: #ff916b;
+}
+
+.result-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+}
+
+.result-content {
+    padding: 22px;
+}
+
+.result-name {
+    font-size: 25px;
+    font-weight: 900;
+}
+
+.result-desc {
+    color: #999;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-top: 10px;
+}
+
+.result-score {
+    margin-top: 18px;
+    font-size: 14px;
+}
+
+.result-reason {
+    margin-top: 15px;
+    padding: 15px;
+    background: rgba(255,255,255,.04);
+    border-radius: 14px;
+    color: #bbb;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.final-recommendation {
+    margin-top: 40px;
+    padding: 35px;
+    border-radius: 28px;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,100,60,.12),
+            rgba(255,180,70,.05)
+        );
+    border: 1px solid rgba(255,120,70,.3);
+    text-align: center;
+}
+
+.final-small {
+    color: #ff895e;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.final-name {
+    font-size: 42px;
+    font-weight: 900;
+    margin: 8px 0;
+}
+
+.final-text {
+    color: #aaa;
+}
+
+/* BUTTON */
+
+.button-area {
+    text-align: center;
+    margin: 40px 0;
+}
+
+.main-button {
+    border: none;
+    padding: 17px 35px;
+    border-radius: 50px;
+    background: linear-gradient(90deg,#ff613d,#ff9d52);
+    color: white;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: .3s;
+    box-shadow: 0 10px 30px rgba(255,90,50,.25);
+}
+
+.main-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(255,90,50,.4);
+}
+
+.secondary-button {
+    margin-left: 10px;
+    background: rgba(255,255,255,.07);
+    box-shadow: none;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* MOBILE */
+
+@media(max-width:900px) {
+    .category-grid {
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .style-grid {
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .food-grid {
+        grid-template-columns: repeat(3,1fr);
+    }
+}
+
+@media(max-width:600px) {
+    .category-grid,
+    .style-grid,
+    .top3 {
+        grid-template-columns: 1fr;
+    }
+
+    .food-grid {
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .header-title {
+        letter-spacing: -2px;
+    }
+
+    .result-card.first {
+        transform: none;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+    <div class="logo">AI FOOD DECISION</div>
+    <h1 class="header-title">오늘 <span>뭐 먹지?</span></h1>
+    <p class="subtitle">
+        고민은 AI에게 맡기세요.
+    </p>
+</header>
+
+<div class="progress">
+    <div class="progress-step active" id="p1"></div>
+    <div class="progress-step" id="p2"></div>
+    <div class="progress-step" id="p3"></div>
+    <div class="progress-step" id="p4"></div>
+</div>
+
+
+<!-- =========================
+     SCREEN 1
+========================= -->
+
+<section id="categoryScreen" class="screen active">
+
+    <h2 class="section-title">
+        오늘은 어떤 걸 먹어볼까요?
+    </h2>
+
+    <p class="section-desc">
+        AI가 무작위로 고른 4개의 카테고리 중 하나를 선택하세요.
+    </p>
+
+    <div id="categoryGrid" class="category-grid"></div>
+
+    <div class="button-area">
+        <button class="main-button" onclick="shuffleCategories()">
+            🔀 다시 만들기
+        </button>
+    </div>
+
+</section>
+
+
+<!-- =========================
+     SCREEN 2
+========================= -->
+
+<section id="styleScreen" class="screen">
+
+    <h2 class="section-title">
+        어떤 방식으로 골라드릴까요?
+    </h2>
+
+    <p class="section-desc">
+        선택한 방식에 따라 AI의 판단 기준이 달라집니다.
+    </p>
+
+    <div id="styleGrid" class="style-grid"></div>
+
+    <div class="button-area">
+        <button class="main-button secondary-button"
+                onclick="goToCategory()">
+            ← 카테고리 다시 선택
+        </button>
+    </div>
+
+</section>
+
+
+<!-- =========================
+     SCREEN 3
+========================= -->
+
+<section id="analysisScreen" class="screen">
+
+    <div class="analysis-header">
+
+        <div class="ai-badge">
+            AI DECISION ENGINE
+        </div>
+
+        <h2 class="analysis-title">
+            후보 음식들을 분석하고 있습니다
+        </h2>
+
+        <p id="analysisStatus" class="analysis-status">
+            데이터를 불러오는 중...
+        </p>
+
+    </div>
+
+    <div class="analysis-box">
+
+        <div class="analysis-bar">
+            <div id="analysisProgress"
+                 class="analysis-progress"></div>
+        </div>
+
+        <div id="analysisStage"
+             class="analysis-stage">
+            후보 음식 준비 중...
+        </div>
+
+    </div>
+
+    <div id="foodGrid" class="food-grid"></div>
+
+</section>
+
+
+<!-- =========================
+     SCREEN 4
+========================= -->
+
+<section id="resultScreen" class="screen">
+
+    <div class="result-header">
+
+        <div class="result-label">
+            AI FINAL DECISION
+        </div>
+
+        <h2 class="result-title">
+            오늘의 추천 결과
+        </h2>
+
+    </div>
+
+    <div id="top3" class="top3"></div>
+
+    <div id="finalRecommendation"
+         class="final-recommendation">
+    </div>
+
+    <div class="button-area">
+
+        <button class="main-button"
+                onclick="restart()">
+            🔄 다시 추천받기
+        </button>
+
+    </div>
+
+</section>
+
+</div>
+
+
+<script>
+
+/* =====================================
+   CATEGORY DATA
+===================================== */
+
+const categories = [
+
+    {
+        name:"한식",
+        image:"https://images.unsplash.com/photo-1498654896293-37aacf113fd9?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+        name:"중식",
+        image:"https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+        name:"일식",
+        image:"https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+        name:"양식",
+        image:"https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+        name:"분식",
+        image:"https://images.unsplash.com/photo-1591814468924-caf88d1232e1?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+        name:"치킨",
+        image:"https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+        name:"햄버거",
+        image:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+        name:"멕시칸",
+        image:"https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+        name:"베트남",
+        image:"https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+        name:"태국",
+        image:"https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+        name:"인도",
+        image:"https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+        name:"건강식",
+        image:"https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+        name:"면요리",
+        image:"https://images.unsplash.com/photo-1552611052-33e04de081de?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+        name:"야식",
+        image:"https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=900&q=80"
+    }
+
+];
+
+
+/* =====================================
+   FOOD DATABASE
+===================================== */
+
+const foods = {
+
+"한식":[
+["김치찌개","https://images.unsplash.com/photo-1583224964978-2257b960c3d3","얼큰하고 든든한 국민 찌개",8],
+["된장찌개","https://images.unsplash.com/photo-1601050690597-df0568f70950","구수하고 편안한 한식",7],
+["제육볶음","https://images.unsplash.com/photo-1529563021893-cc83c992d75d","매콤달콤한 돼지고기 요리",9],
+["비빔밥","https://images.unsplash.com/photo-1553163147-622ab57be1c7","다양한 재료를 한 번에 즐기는 음식",8],
+["불고기","https://images.unsplash.com/photo-1590301157890-4810ed352733","달콤하고 부드러운 고기 요리",9],
+["삼겹살","https://images.unsplash.com/photo-1529692236671-f1dc4c9f1b52","직접 구워 먹는 대표 고기",10],
+["닭갈비","https://images.unsplash.com/photo-1580959375944-abd7e991f971","매콤하고 푸짐한 닭요리",9],
+["순두부찌개","https://images.unsplash.com/photo-1601050690117-94f5f6fa8bd7","부드럽고 얼큰한 찌개",8],
+["갈비탕","https://images.unsplash.com/photo-1547592166-23ac45744acd","깔끔하고 든든한 국물",7],
+["육개장","https://images.unsplash.com/photo-1547592180-85f173990554","얼큰한 소고기 국물",8],
+["김치볶음밥","https://images.unsplash.com/photo-1603133872878-684f208fb84b","간단하지만 강력한 메뉴",9],
+["떡갈비","https://images.unsplash.com/photo-1601050690597-df0568f70950","달콤하고 부드러운 고기",7],
+["보쌈","https://images.unsplash.com/photo-1600628422019-3f2e9f2c8f6a","담백한 돼지고기와 김치",8],
+["감자탕","https://images.unsplash.com/photo-1601050690117-94f5f6fa8bd7","진하고 뜨거운 국물 요리",9],
+["냉면","https://images.unsplash.com/photo-1569058242253-92a9c755a0ec","시원하고 깔끔한 면요리",8]
+],
+
+"중식":[
+["마라탕","https://images.unsplash.com/photo-1585032226651-759b368d7246","얼얼하고 자극적인 국물",10],
+["마라샹궈","https://images.unsplash.com/photo-1515003197210-e0cd71810b5f","강렬한 향신료와 다양한 재료",10],
+["짜장면","https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43","진한 춘장 소스의 면요리",10],
+["짬뽕","https://images.unsplash.com/photo-1552611052-33e04de081de","얼큰하고 시원한 해물 국물",9],
+["탕수육","https://images.unsplash.com/photo-1512058564366-18510be2db19","바삭한 돼지고기와 새콤달콤 소스",10],
+["꿔바로우","https://images.unsplash.com/photo-1515003197210-e0cd71810b5f","쫀득하고 새콤달콤한 요리",8],
+["볶음밥","https://images.unsplash.com/photo-1603133872878-684f208fb84b","고소하고 든든한 볶음밥",8],
+["유린기","https://images.unsplash.com/photo-1525755662778-989d0524087e","바삭한 닭고기와 새콤한 소스",8],
+["깐풍기","https://images.unsplash.com/photo-1525755662778-989d0524087e","매콤달콤한 닭요리",9],
+["양장피","https://images.unsplash.com/photo-1547592180-85f173990554","다양한 재료를 함께 즐기는 요리",7],
+["팔보채","https://images.unsplash.com/photo-1512058564366-18510be2db19","해산물과 채소가 풍부한 요리",7],
+["고추잡채","https://images.unsplash.com/photo-1515003197210-e0cd71810b5f","고추와 돼지고기의 조화",8],
+["유산슬","https://images.unsplash.com/photo-1547592180-85f173990554","부드러운 해산물과 채소",7],
+["칠리새우","https://images.unsplash.com/photo-1565680018434-b513d5e5fd47","바삭한 새우와 달콤매콤 소스",9],
+["크림새우","https://images.unsplash.com/photo-1565680018434-b513d5e5fd47","부드럽고 달콤한 새우요리",8],
+["새우볶음밥","https://images.unsplash.com/photo-1603133872878-684f208fb84b","고소하고 담백한 볶음밥",8],
+["탄탄면","https://images.unsplash.com/photo-1569718212165-3a8278d5f624","고소하고 매콤한 면요리",9],
+["우육면","https://images.unsplash.com/photo-1569718212165-3a8278d5f624","진한 소고기 국물과 면",8],
+["딤섬","https://images.unsplash.com/photo-1496116218417-1a781b1c416c","작고 다양한 중국식 만두",8],
+["군만두","https://images.unsplash.com/photo-1496116218417-1a781b1c416c","바삭하게 구운 만두",8]
+],
+
+"일식":[
+["초밥","https://images.unsplash.com/photo-1579871494447-9811cf80d66c","신선한 생선과 밥의 조합",10],
+["연어초밥","https://images.unsplash.com/photo-1563612116625-3012372fccce","부드럽고 고소한 연어",9],
+["돈카츠","https://images.unsplash.com/photo-1591814468924-caf88d1232e1","바삭한 돼지고기 튀김",10],
+["라멘","https://images.unsplash.com/photo-1569718212165-3a8278d5f624","진한 국물과 쫄깃한 면",10],
+["우동","https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43","따뜻하고 부드러운 면요리",8],
+["규동","https://images.unsplash.com/photo-1569718212165-3a8278d5f624","달콤짭짤한 소고기 덮밥",9],
+["가츠동","https://images.unsplash.com/photo-1601050690597-df0568f70950","돈카츠와 계란 덮밥",9],
+["오야코동","https://images.unsplash.com/photo-1603133872878-684f208fb84b","닭고기와 계란 덮밥",8],
+["텐동","https://images.unsplash.com/photo-1553621042-f6e147245754","바삭한 튀김 덮밥",9],
+["사케동","https://images.unsplash.com/photo-1563612116625-3012372fccce","연어가 올라간 덮밥",9],
+["야키소바","https://images.unsplash.com/photo-1552611052-33e04de081de","볶음면 특유의 감칠맛",8],
+["타코야키","https://images.unsplash.com/photo-1569058242253-92a9c755a0ec","한입 크기의 문어 간식",8],
+["오코노미야키","https://images.unsplash.com/photo-1591814468924-caf88d1232e1","일본식 부침개",8],
+["소바","https://images.unsplash.com/photo-1569718212165-3a8278d5f624","깔끔하고 담백한 면요리",7],
+["미소라멘","https://images.unsplash.com/photo-1569718212165-3a8278d5f624","구수한 된장 베이스 라멘",9]
+],
+
+"양식":[
+["파스타","https://images.unsplash.com/photo-1473093295043-cdd812d0e601","다양한 소스와 면의 조합",10],
+["알리오올리오","https://images.unsplash.com/photo-1473093295043-cdd812d0e601","마늘과 올리브오일의 깔끔한 맛",8],
+["까르보나라","https://images.unsplash.com/photo-1612874742237-6526221588e3","크리미하고 진한 파스타",10],
+["토마토파스타","https://images.unsplash.com/photo-1551892374-ecf8754cf8b0","상큼하고 진한 토마토 맛",9],
+["피자","https://images.unsplash.com/photo-1513104890138-7c749659a591","치즈와 토핑을 즐기는 대표 메뉴",10],
+["마르게리타 피자","https://images.unsplash.com/photo-1574071318508-1cdbab80d002","토마토와 치즈의 기본 피자",8],
+["스테이크","https://images.unsplash.com/photo-1546833999-b9f581a1996d","육즙 가득한 고기 요리",10],
+["함박스테이크","https://images.unsplash.com/photo-1558030006-450675393462","부드러운 다짐육 스테이크",9],
+["오므라이스","https://images.unsplash.com/photo-1533089860892-a7c6f0a88666","부드러운 계란과 볶음밥",9],
+["리조또","https://images.unsplash.com/photo-1476124369491-e7addf5db371","부드럽고 진한 쌀요리",8],
+["라자냐","https://images.unsplash.com/photo-1574894709920-11b28e7367e3","층층이 쌓은 진한 파스타",9],
+["감바스","https://images.unsplash.com/photo-1565680018434-b513d5e5fd47","마늘과 새우의 조합",9],
+["치킨샐러드","https://images.unsplash.com/photo-1512621776951-a57141f2eefd","가볍고 건강한 식사",7],
+["그라탕","https://images.unsplash.com/photo-1547592180-85f173990554","치즈가 듬뿍 들어간 오븐요리",8],
+["봉골레","https://images.unsplash.com/photo-1473093295043-cdd812d0e601","조개와 마늘의 깔끔한 파스타",8]
+],
+
+"분식":[
+["떡볶이","https://images.unsplash.com/photo-1591814468924-caf88d1232e1","매콤달콤한 국민 간식",10],
+["라볶이","https://images.unsplash.com/photo-1591814468924-caf88d1232e1","라면과 떡볶이의 조합",9],
+["김밥","https://images.unsplash.com/photo-1553163147-622ab57be1c7","간편하고 다양한 재료",9],
+["참치김밥","https://images.unsplash.com/photo-1553163147-622ab57be1c7","고소한 참치가 들어간 김밥",8],
+["튀김","https://images.unsplash.com/photo-1601050690597-df0568f70950","바삭한 분식 대표 메뉴",8],
+["순대","https://images.unsplash.com/photo-1601050690117-94f5f6fa8bd7","쫄깃하고 담백한 메뉴",7],
+["어묵","https://images.unsplash.com/photo-1601050690117-94f5f6fa8bd7","따뜻하고 짭짤한 국물 간식",8],
+["쫄면","https://images.unsplash.com/photo-1552611052-33e04de081de","새콤매콤한 면요리",9],
+["라면","https://images.unsplash.com/photo-1569718212165-3a8278d5f624","간단하지만 강력한 메뉴",10],
+["비빔만두","https://images.unsplash.com/photo-1496116218417-1a781b1c416c","만두와 매콤한 채소의 조합",8],
+["김치볶음밥","https://images.unsplash.com/photo-1603133872878-684f208fb84b","매콤하고 든든한 볶음밥",9],
+["돈까스김밥","https://images.unsplash.com/photo-1553163147-622ab57be1c7","돈까스와 김밥의 조합",9],
+["치즈떡볶이","https://images.unsplash.com/photo-1591814468924-caf88d1232e1","치즈가 올라간 떡볶이",10],
+["고기만두","https://images.unsplash.com/photo-1496116218417-1a781b1c416c","육즙 가득한 만두",8],
+["물만두","https://images.unsplash.com/photo-1496116218417-1a781b1c416c","부드럽고 담백한 만두",7]
+],
+
+"치킨":[
+["후라이드 치킨","https://images.unsplash.com/photo-1569058242253-92a9c755a0ec","바삭하고 담백한 기본 치킨",10],
+["양념치킨","https://images.unsplash.com/photo-1525755662778-989d0524087e","달콤매콤한 인기 메뉴",10],
+["간장치킨","https://images.unsplash.com/photo-1525755662778-989d0524087e","짭짤달콤한 간장 소스",9],
+["치즈볼","https://images.unsplash.com/photo-1601050690597-df0568f70950","치킨과 잘 어울리는 사이드",8],
+["닭강정","https://images.unsplash.com/photo-1525755662778-989d0524087e","바삭하고 달콤한 닭요리",9],
+["파닭","https://images.unsplash.com/photo-1569058242253-92a9c755a0ec","파와 치킨의 조합",9],
+["마늘치킨","https://images.unsplash.com/photo-1525755662778-989d0524087e","마늘 풍미가 강한 치킨",9],
+["매운치킨","https://images.unsplash.com/photo-1525755662778-989d0524087e","강렬하게 매운 치킨",9],
+["허니치킨","https://images.unsplash.com/photo-1569058242253-92a9c755a0ec","달콤한 허니 소스",8],
+["순살치킨","https://images.unsplash.com/photo-1569058242253-92a9c755a0ec","먹기 편한 순살 메뉴",9],
+["오븐치킨","https://images.unsplash.com/photo-1569058242253-92a9c755a0ec","담백한 구운 치킨",8],
+["치킨윙","https://images.unsplash.com/photo-1525755662778-989d0524087e","짭짤하고 진한 윙 메뉴",9],
+["치킨텐더","https://images.unsplash.com/photo-1569058242253-92a9c755a0ec","부드러운 닭가슴살 튀김",8],
+["크리스피치킨","https://images.unsplash.com/photo-1569058242253-92a9c755a0ec","바삭한 튀김옷",9],
+["핫윙","https://images.unsplash.com/photo-1525755662778-989d0524087e","매콤한 닭날개",9]
+],
+
+"햄버거":[
+["치즈버거","https://images.unsplash.com/photo-1568901346375-23c9450c58cd","치즈와 패티의 기본 조합",10],
+["불고기버거","https://images.unsplash.com/photo-1550547660-d9450f859349","달콤한 소스의 한국식 버거",9],
+["치킨버거","https://images.unsplash.com/photo-1606755962773-d324e0a13086","바삭한 치킨 패티",9],
+["더블버거","https://images.unsplash.com/photo-1568901346375-23c9450c58cd","패티가 두 장인 든든한 버거",10],
+["새우버거","https://images.unsplash.com/photo-1568901346375-23c9450c58cd","새우 패티의 담백한 맛",8],
+["베이컨버거","https://images.unsplash.com/photo-1550547660-d9450f859349","짭짤한 베이컨 추가",9],
+["머쉬룸버거","https://images.unsplash.com/photo-1550547660-d9450f859349","버섯과 패티의 조합",8],
+["핫치킨버거","https://images.unsplash.com/photo-1606755962773-d324e0a13086","매콤한 치킨 버거",9],
+["트러플버거","https://images.unsplash.com/photo-1568901346375-23c9450c58cd","진한 트러플 풍미",8],
+["치즈폭탄버거","https://images.unsplash.com/photo-1568901346375-23c9450c58cd","치즈가 가득한 버거",10],
+["버거세트","https://images.unsplash.com/photo-1550547660-d9450f859349","버거와 감자튀김의 조합",10],
+["치킨샌드위치","https://images.unsplash.com/photo-1606755962773-d324e0a13086","바삭한 치킨 샌드위치",9],
+["베이컨치즈버거","https://images.unsplash.com/photo-1550547660-d9450f859349","베이컨과 치즈의 강력한 조합",10],
+["핫도그버거","https://images.unsplash.com/photo-1568901346375-23c9450c58cd","소시지와 버거의 조합",7],
+["클래식버거","https://images.unsplash.com/photo-1568901346375-23c9450c58cd","가장 기본적인 버거",8]
+],
+
+"멕시칸":[
+["타코","https://images.unsplash.com/photo-1551504734-5ee1c4a1479b","또띠아에 다양한 재료를 넣은 요리",10],
+["부리또","https://images.unsplash.com/photo-1626700051175-6818013e1d4f","든든하게 먹는 멕시칸 메뉴",9],
+["퀘사디아","https://images.unsplash.com/photo-1618040996337-56904b7850b9","치즈와 또띠아의 조합",9],
+["나초","https://images.unsplash.com/photo-1513456852971-30c0b8199d4d","바삭한 옥수수칩과 치즈",8],
+["치킨타코","https://images.unsplash.com/photo-1551504734-5ee1c4a1479b","치킨이 들어간 타코",9],
+["비프타코","https://images.unsplash.com/photo-1551504734-5ee1c4a1479b","소고기 타코",9],
+["치즈나초","https://images.unsplash.com/photo-1513456852971-30c0b8199d4d","치즈 듬뿍 나초",8],
+["살사타코","https://images.unsplash.com/photo-1551504734-5ee1c4a1479b","상큼한 살사와 타코",8],
+["치미창가","https://images.unsplash.com/photo-1626700051175-6818013e1d4f","바삭하게 튀긴 부리또",8],
+["엔칠라다","https://images.unsplash.com/photo-1626700051175-6818013e1d4f","소스를 곁들인 멕시칸 요리",8],
+["화이타","https://images.unsplash.com/photo-1544025162-d76694265947","고기와 채소를 구워 먹는 요리",9],
+["과카몰리","https://images.unsplash.com/photo-1601050690597-df0568f70950","아보카도 기반의 딥",7],
+["치킨부리또","https://images.unsplash.com/photo-1626700051175-6818013e1d4f","치킨과 밥을 넣은 부리또",9],
+["비프부리또","https://images.unsplash.com/photo-1626700051175-6818013e1d4f","소고기와 밥의 조합",9],
+["타코샐러드","https://images.unsplash.com/photo-1512621776951-a57141f2eefd","가볍게 즐기는 멕시칸",7]
+],
+
+"베트남":[
+["쌀국수","https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43","깔끔한 육수의 대표 베트남 음식",10],
+["분짜","https://images.unsplash.com/photo-1552611052-33e04de081de","숯불고기와 쌀국수",9],
+["반미","https://images.unsplash.com/photo-1601050690117-94f5f6fa8bd7","바삭한 바게트 샌드위치",9],
+["분보후에","https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43","얼큰하고 진한 쌀국수",9],
+["월남쌈","https://images.unsplash.com/photo-1512621776951-a57141f2eefd","신선한 채소와 고기",8],
+["볶음쌀국수","https://images.unsplash.com/photo-1552611052-33e04de081de","고소한 볶음 면요리",8],
+["닭쌀국수","https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43","담백한 닭고기 쌀국수",8],
+["소고기쌀국수","https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43","진한 소고기 육수",9],
+["새우월남쌈","https://images.unsplash.com/photo-1512621776951-a57141f2eefd","새우와 채소를 넣은 월남쌈",8],
+["분짜세트","https://images.unsplash.com/photo-1552611052-33e04de081de","고기와 면을 함께 즐기는 세트",9],
+["짜조","https://images.unsplash.com/photo-1601050690597-df0568f70950","바삭하게 튀긴 베트남식 만두",8],
+["고이꾸온","https://images.unsplash.com/photo-1512621776951-a57141f2eefd","신선한 베트남식 롤",8],
+["반쎄오","https://images.unsplash.com/photo-1591814468924-caf88d1232e1","바삭한 베트남식 전",9],
+["베트남식 볶음밥","https://images.unsplash.com/photo-1603133872878-684f208fb84b","담백한 볶음밥",7],
+["새우쌀국수","https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43","새우와 쌀국수의 조합",8]
+],
+
+"태국":[
+["팟타이","https://images.unsplash.com/photo-1559314809-0d155014e29e","새콤달콤한 태국식 볶음면",10],
+["똠얌꿍","https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd","매콤새콤한 새우 수프",10],
+["푸팟퐁커리","https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd","부드러운 커리와 게",9],
+["카오팟","https://images.unsplash.com/photo-1603133872878-684f208fb84b","태국식 볶음밥",8],
+["그린커리","https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd","향긋한 태국식 커리",9],
+["팟카파오","https://images.unsplash.com/photo-1603133872878-684f208fb84b","바질과 고기의 볶음",9],
+["뿌팟퐁커리","https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd","게살과 커리의 조합",9],
+["카오만까이","https://images.unsplash.com/photo-1525755662778-989d0524087e","태국식 닭고기 덮밥",8],
+["쏨땀","https://images.unsplash.com/photo-1512621776951-a57141f2eefd","매콤새콤한 샐러드",8],
+["망고스티키라이스","https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e","달콤한 망고 디저트",7],
+["치킨팟타이","https://images.unsplash.com/photo-1559314809-0d155014e29e","치킨을 넣은 팟타이",9],
+["새우팟타이","https://images.unsplash.com/photo-1559314809-0d155014e29e","새우를 넣은 팟타이",10],
+["레드커리","https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd","진하고 매콤한 커리",9],
+["태국식 국수","https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43","향신료 풍미의 국수",8],
+["닭고기 바질볶음","https://images.unsplash.com/photo-1603133872878-684f208fb84b","향긋한 바질 볶음",9]
+],
+
+"인도":[
+["치킨커리","https://images.unsplash.com/photo-1585937421612-70a008356fbe","향신료가 풍부한 대표 커리",10],
+["버터치킨","https://images.unsplash.com/photo-1601050690597-df0568f70950","부드럽고 크리미한 커리",10],
+["난","https://images.unsplash.com/photo-1601050690597-df0568f70950","커리와 잘 어울리는 인도식 빵",8],
+["탄두리치킨","https://images.unsplash.com/photo-1588166524941-3bf61a9c41db","향신료에 재운 구운 치킨",9],
+["비리야니","https://images.unsplash.com/photo-1589302168068-964664d93dc0","향신료 풍미의 밥요리",10],
+["팔락파니르","https://images.unsplash.com/photo-1585937421612-70a008356fbe","시금치와 치즈 커리",8],
+["달커리","https://images.unsplash.com/photo-1585937421612-70a008356fbe","담백한 렌틸 커리",7],
+["치킨티카","https://images.unsplash.com/photo-1588166524941-3bf61a9c41db","향신료 치킨 구이",9],
+["마살라 도사","https://images.unsplash.com/photo-1601050690597-df0568f70950","바삭한 인도식 팬케이크",8],
+["치킨마살라","https://images.unsplash.com/photo-1585937421612-70a008356fbe","진한 향신료 커리",9],
+["새우커리","https://images.unsplash.com/photo-1585937421612-70a008356fbe","새우와 향신료의 조합",9],
+["치즈난","https://images.unsplash.com/photo-1601050690597-df0568f70950","치즈가 들어간 난",9],
+["갈릭난","https://images.unsplash.com/photo-1601050690597-df0568f70950","마늘 향이 강한 난",8],
+["알루고비","https://images.unsplash.com/photo-1585937421612-70a008356fbe","감자와 콜리플라워 요리",7],
+["인도식 볶음밥","https://images.unsplash.com/photo-1603133872878-684f208fb84b","향신료 볶음밥",8]
+],
+
+"건강식":[
+["샐러드","https://images.unsplash.com/photo-1512621776951-a57141f2eefd","신선한 채소 중심의 식사",8],
+["닭가슴살 샐러드","https://images.unsplash.com/photo-1512621776951-a57141f2eefd","단백질과 채소를 함께",9],
+["연어 샐러드","https://images.unsplash.com/photo-1512621776951-a57141f2eefd","연어와 채소의 조합",9],
+["포케","https://images.unsplash.com/photo-1547592180-85f173990554","밥과 다양한 토핑",10],
+["두부 샐러드","https://images.unsplash.com/photo-1512621776951-a57141f2eefd","담백한 식물성 단백질",8],
+["아보카도 샐러드","https://images.unsplash.com/photo-1512621776951-a57141f2eefd","고소한 아보카도와 채소",8],
+["닭가슴살 도시락","https://images.unsplash.com/photo-1512621776951-a57141f2eefd","균형 잡힌 한 끼",9],
+["현미밥 도시락","https://images.unsplash.com/photo-1512621776951-a57141f2eefd","든든한 건강식",8],
+["연어포케","https://images.unsplash.com/photo-1547592180-85f173990554","연어 중심 포케",10],
+["참치포케","https://images.unsplash.com/photo-1547592180-85f173990554","참치와 채소 포케",9],
+["계란샐러드","https://images.unsplash.com/photo-1512621776951-a57141f2eefd","부드러운 계란 샐러드",8],
+["고구마샐러드","https://images.unsplash.com/photo-1512621776951-a57141f2eefd","달콤하고 든든한 샐러드",7],
+["두부덮밥","https://images.unsplash.com/photo-1603133872878-684f208fb84b","두부와 밥의 건강한 조합",8],
+["채소비빔밥","https://images.unsplash.com/photo-1553163147-622ab57be1c7","채소가 풍부한 비빔밥",9],
+["닭고기 현미밥","https://images.unsplash.com/photo-1512621776951-a57141f2eefd","담백하고 든든한 식사",8]
+],
+
+"면요리":[
+["라멘","https://images.unsplash.com/photo-1569718212165-3a8278d5f624","진한 국물의 일본식 면",10],
+["짜장면","https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43","진한 춘장 면요리",10],
+["짬뽕","https://images.unsplash.com/photo-1552611052-33e04de081de","얼큰한 해물 면요리",10],
+["냉면","https://images.unsplash.com/photo-1569058242253-92a9c755a0ec","시원한 면요리",9],
+["우동","https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43","따뜻하고 부드러운 면",8],
+["파스타","https://images.unsplash.com/photo-1473093295043-cdd812d0e601","다양한 소스의 파스타",10],
+["쌀국수","https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43","깔끔한 국물 면요리",9],
+["팟타이","https://images.unsplash.com/photo-1559314809-0d155014e29e","태국식 볶음면",9],
+["탄탄면","https://images.unsplash.com/photo-1569718212165-3a8278d5f624","고소하고 매콤한 면",9],
+["소바","https://images.unsplash.com/photo-1569718212165-3a8278d5f624","담백한 일본식 면",7],
+["칼국수","https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43","따뜻하고 구수한 국물",8],
+["잔치국수","https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43","깔끔한 멸치 국수",7],
+["비빔국수","https://images.unsplash.com/photo-1552611052-33e04de081de","새콤매콤한 면요리",9],
+["쫄면","https://images.unsplash.com/photo-1552611052-33e04de081de","쫄깃하고 매콤한 면",9],
+["볶음우동","https://images.unsplash.com/photo-1552611052-33e04de081de","짭짤한 볶음 면",8]
+],
+
+"야식":[
+["치킨","https://images.unsplash.com/photo-1569058242253-92a9c755a0ec","야식의 대표주자",10],
+["피자","https://images.unsplash.com/photo-1513104890138-7c749659a0ec","치즈와 토핑이 가득한 메뉴",10],
+["족발","https://images.unsplash.com/photo-1600628422019-3f2e9f2c8f6a","쫄깃하고 든든한 야식",9],
+["보쌈","https://images.unsplash.com/photo-1600628422019-3f2e9f2c8f6a","담백한 돼지고기",9],
+["떡볶이","https://images.unsplash.com/photo-1591814468924-caf88d1232e1","매콤달콤한 야식",10],
+["라면","https://images.unsplash.com/photo-1569718212165-3a8278d5f624","간단하고 강력한 야식",10],
+["곱창","https://images.unsplash.com/photo-1529692236671-f1dc4c9f1b52","고소하고 진한 맛",9],
+["닭발","https://images.unsplash.com/photo-1525755662778-989d0524087e","매콤한 야식",9],
+["오돌뼈","https://images.unsplash.com/photo-1525755662778-989d0524087e","매콤하고 쫄깃한 메뉴",8],
+["막창","https://images.unsplash.com/photo-1529692236671-f1dc4c9f1b52","고소한 구이 메뉴",9],
+["닭강정","https://images.unsplash.com/photo-1525755662778-989d0524087e","달콤하고 바삭한 야식",9],
+["김치전","https://images.unsplash.com/photo-1591814468924-caf88d1232e1","바삭하고 매콤한 전",8],
+["해물파전","https://images.unsplash.com/photo-1591814468924-caf88d1232e1","해물과 파가 들어간 전",8],
+["떡꼬치","https://images.unsplash.com/photo-1591814468924-caf88d1232e1","달콤매콤한 간식",8],
+["햄버거","https://images.unsplash.com/photo-1568901346375-23c9450c58cd","든든한 야식",10]
+]
+
+};
+
+
+/* =====================================
+   AI STYLES
+===================================== */
+
+const styles = [
+
+{
+    name:"냉정한 판사",
+    icon:"⚖️",
+    desc:"감정은 배제하고 객관적인 기준으로 냉정하게 판결합니다.",
+    weights:{base:1, popularity:1.2, quality:1.4, variety:1}
+},
+
+{
+    name:"친구처럼 추천",
+    icon:"😎",
+    desc:"오늘 기분과 먹고 싶은 분위기를 생각해서 친구처럼 추천합니다.",
+    weights:{base:1.4, popularity:1.2, quality:.8, variety:1.3}
+},
+
+{
+    name:"부모님처럼 추천",
+    icon:"👨‍👩‍👦",
+    desc:"든든하고 실패 확률이 낮은 메뉴를 중심으로 추천합니다.",
+    weights:{base:1.5, popularity:1.4, quality:1.2, variety:.7}
+},
+
+{
+    name:"점쟁이처럼 추천",
+    icon:"🔮",
+    desc:"오늘의 운과 묘한 우연을 바탕으로 운명적인 메뉴를 찾습니다.",
+    weights:{base:.8, popularity:.7, quality:.8, variety:1.8}
+},
+
+{
+    name:"극도로 논리적인 AI",
+    icon:"🤖",
+    desc:"여러 요소를 계산해 가장 높은 점수를 받은 메뉴를 찾습니다.",
+    weights:{base:1, popularity:1.5, quality:1.5, variety:1.2}
+},
+
+{
+    name:"아무 생각 없는 랜덤봇",
+    icon:"🎲",
+    desc:"복잡하게 생각하지 않습니다. 그냥 운명에 맡깁니다.",
+    weights:{base:1, popularity:1, quality:1, variety:1}
+}
+
+];
+
+
+/* =====================================
+   STATE
+===================================== */
+
+let selectedCategory = null;
+let selectedStyle = null;
+let currentFoods = [];
+let previousCategories = [];
+
+
+/* =====================================
+   CATEGORY
+===================================== */
+
+function shuffleArray(array) {
+
+    return [...array].sort(() => Math.random() - .5);
+
+}
+
+
+function generateCategories() {
+
+    let available = categories.filter(
+        c => !previousCategories.includes(c.name)
+    );
+
+    if(available.length < 4) {
+        available = [...categories];
+    }
+
+    const selected = shuffleArray(available).slice(0,4);
+
+    previousCategories = selected.map(c => c.name);
+
+    return selected;
+}
+
+
+function renderCategories() {
+
+    const grid = document.getElementById("categoryGrid");
+
+    grid.innerHTML = "";
+
+    generateCategories().forEach(category => {
+
+        const card = document.createElement("div");
+
+        card.className = "category-card";
+
+        card.innerHTML = `
+            <img src="${category.image}">
+            <div class="category-overlay"></div>
+            <div class="category-name">${category.name}</div>
+        `;
+
+        card.onclick = () => selectCategory(category.name);
+
+        grid.appendChild(card);
+
+    });
+
+}
+
+
+function shuffleCategories() {
+
+    renderCategories();
+
+}
+
+
+/* =====================================
+   STYLE
+===================================== */
+
+function renderStyles() {
+
+    const grid = document.getElementById("styleGrid");
+
+    grid.innerHTML = "";
+
+    styles.forEach(style => {
+
+        const card = document.createElement("div");
+
+        card.className = "style-card";
+
+        card.innerHTML = `
+            <div class="style-icon">${style.icon}</div>
+            <div class="style-name">${style.name}</div>
+            <div class="style-desc">${style.desc}</div>
+        `;
+
+        card.onclick = () => selectStyle(style);
+
+        grid.appendChild(card);
+
+    });
+
+}
+
+
+function selectCategory(category) {
+
+    selectedCategory = category;
+
+    showScreen("styleScreen");
+
+    updateProgress(2);
+
+}
+
+
+/* =====================================
+   STYLE SELECT
+===================================== */
+
+function selectStyle(style) {
+
+    selectedStyle = style;
+
+    startAnalysis();
+
+}
+
+
+/* =====================================
+   SCREEN CONTROL
+===================================== */
+
+function showScreen(id) {
+
+    document.querySelectorAll(".screen").forEach(
+        screen => screen.classList.remove("active")
+    );
+
+    document.getElementById(id).classList.add("active");
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+
+function updateProgress(step) {
+
+    for(let i=1;i<=4;i++) {
+
+        const el = document.getElementById("p"+i);
+
+        if(i <= step)
+            el.classList.add("active");
+        else
+            el.classList.remove("active");
+
+    }
+
+}
+
+
+function goToCategory() {
+
+    showScreen("categoryScreen");
+
+    updateProgress(1);
+
+}
+
+
+/* =====================================
+   FOOD PREPARATION
+===================================== */
+
+function prepareFoods() {
+
+    let data = foods[selectedCategory] || [];
+
+    data = shuffleArray(data);
+
+    return data.map(item => ({
+
+        name:item[0],
+        image:item[1],
+        description:item[2],
+        base:item[3],
+        score:0,
+        eliminated:false
+
+    }));
+
+}
+
+
+/* =====================================
+   AI SCORING
+===================================== */
+
+function calculateScore(food,index) {
+
+    const w = selectedStyle.weights;
+
+    let randomFactor = Math.random() * 5;
+
+    let popularity = food.base;
+
+    let quality = food.base + Math.random() * 3;
+
+    let variety = (index % 5) + Math.random() * 3;
+
+    let score =
+        popularity * w.popularity +
+        quality * w.quality +
+        variety * w.variety +
+        randomFactor * w.base;
+
+    return Math.round(score * 10) / 10;
+
+}
+
+
+/* =====================================
+   FOOD GRID
+===================================== */
+
+function renderFoodGrid() {
+
+    const grid = document.getElementById("foodGrid");
+
+    grid.innerHTML = "";
+
+    currentFoods.forEach((food,index) => {
+
+        const card = document.createElement("div");
+
+        card.className = "food-card";
+
+        card.dataset.index = index;
+
+        card.innerHTML = `
+            <img src="${food.image}">
+            <div class="food-info">
+                <div class="food-name">${food.name}</div>
+                <div class="food-score">
+                    분석 점수 ${food.score.toFixed(1)}
+                </div>
+            </div>
+        `;
+
+        grid.appendChild(card);
+
+    });
+
+}
+
+
+/* =====================================
+   ELIMINATION
+===================================== */
+
+function eliminateLowest(targetCount) {
+
+    const activeFoods = currentFoods
+        .filter(food => !food.eliminated)
+        .sort((a,b) => b.score - a.score);
+
+    const survivors = activeFoods.slice(0,targetCount);
+
+    currentFoods.forEach(food => {
+
+        if(!survivors.includes(food)) {
+
+            food.eliminated = true;
+
+            const index = currentFoods.indexOf(food);
+
+            const card = document.querySelector(
+                `.food-card[data-index="${index}"]`
+            );
+
+            if(card)
+                card.classList.add("eliminated");
+
+        }
+
+    });
+
+}
+
+
+/* =====================================
+   ANALYSIS
+===================================== */
+
+async function startAnalysis() {
+
+    showScreen("analysisScreen");
+
+    updateProgress(3);
+
+    currentFoods = prepareFoods();
+
+    currentFoods.forEach((food,index) => {
+
+        food.score = calculateScore(food,index);
+
+    });
+
+    renderFoodGrid();
+
+    const progress = document.getElementById("analysisProgress");
+
+    const status = document.getElementById("analysisStatus");
+
+    const stage = document.getElementById("analysisStage");
+
+
+    status.innerText =
+        `${selectedCategory} 음식 ${currentFoods.length}개를 분석 중입니다.`;
+
+
+    progress.style.width = "10%";
+
+    stage.innerText =
+        "후보 음식 데이터를 불러왔습니다.";
+
+    await wait(1000);
+
+
+    progress.style.width = "30%";
+
+    stage.innerText =
+        `${selectedStyle.name} 방식으로 1차 평가 중...`;
+
+    await wait(1000);
+
+
+    eliminateLowest(10);
+
+    progress.style.width = "50%";
+
+    stage.innerText =
+        "1차 탈락자를 결정했습니다. 후보를 10개로 압축합니다.";
+
+    await wait(1200);
+
+
+    eliminateLowest(6);
+
+    progress.style.width = "70%";
+
+    stage.innerText =
+        "2차 심층 분석 중... 최종 후보를 좁히고 있습니다.";
+
+    await wait(1200);
+
+
+    eliminateLowest(3);
+
+    progress.style.width = "90%";
+
+    stage.innerText =
+        "최종 TOP 3를 결정했습니다.";
+
+    await wait(1200);
+
+
+    progress.style.width = "100%";
+
+    stage.innerText =
+        "최종 추천을 결정했습니다.";
+
+    await wait(1000);
+
+
+    showResult();
+
+}
+
+
+function wait(ms) {
+
+    return new Promise(resolve => setTimeout(resolve,ms));
+
+}
+
+
+/* =====================================
+   FINAL RESULT
+===================================== */
+
+function showResult() {
+
+    updateProgress(4);
+
+    showScreen("resultScreen");
+
+    const finalists = currentFoods
+        .filter(food => !food.eliminated)
+        .sort((a,b) => b.score - a.score)
+        .slice(0,3);
+
+    const top3 = document.getElementById("top3");
+
+    top3.innerHTML = "";
+
+    finalists.forEach((food,index) => {
+
+        const card = document.createElement("div");
+
+        card.className =
+            "result-card " +
+            (index === 0 ? "first" : "");
+
+        let reason = getReason(food,index);
+
+        card.innerHTML = `
+
+            <div class="result-rank">
+                ${index === 0 ? "🥇 1위" :
+                  index === 1 ? "🥈 2위" :
+                  "🥉 3위"}
+            </div>
+
+            <img src="${food.image}">
+
+            <div class="result-content">
+
+                <div class="result-name">
+                    ${food.name}
+                </div>
+
+                <div class="result-desc">
+                    ${food.description}
+                </div>
+
+                <div class="result-score">
+                    AI 결정 점수:
+                    <strong>${food.score.toFixed(1)}</strong>
+                </div>
+
+                <div class="result-reason">
+                    ${reason}
+                </div>
+
+            </div>
+        `;
+
+        top3.appendChild(card);
+
+    });
+
+
+    const winner = finalists[0];
+
+    document.getElementById("finalRecommendation").innerHTML = `
+
+        <div class="final-small">
+            TODAY'S FINAL RECOMMENDATION
+        </div>
+
+        <div class="final-name">
+            🍽️ ${winner.name}
+        </div>
+
+        <p class="final-text">
+            ${selectedStyle.name} 방식으로 분석한 결과,
+            오늘은 <strong>${winner.name}</strong>을(를)
+            추천합니다.
+        </p>
+
+    `;
+
+}
+
+
+function getReason(food,index) {
+
+    if(selectedStyle.name === "냉정한 판사") {
+
+        return `맛의 대중성, 기본 점수, 메뉴의 매력도를 종합적으로 비교한 결과 ${index === 0 ? "가장 높은 평가" : "상위권 평가"}를 받았습니다.`;
+
+    }
+
+    if(selectedStyle.name === "친구처럼 추천") {
+
+        return `오늘 뭔가 맛있는 걸 확실하게 먹고 싶다면 ${food.name}이(가) 꽤 좋은 선택입니다. 친구라면 이 메뉴를 추천할 것 같아요.`;
+
+    }
+
+    if(selectedStyle.name === "부모님처럼 추천") {
+
+        return `너무 튀는 선택보다는 든든하게 한 끼를 해결할 수 있는지를 중요하게 보고 평가했습니다.`;
+
+    }
+
+    if(selectedStyle.name === "점쟁이처럼 추천") {
+
+        return `🔮 오늘 이상하게 이 메뉴가 눈에 들어온다면 그냥 운명일지도 모릅니다. 오늘의 음식 운은 ${food.name} 쪽으로 기울었습니다.`;
+
+    }
+
+    if(selectedStyle.name === "극도로 논리적인 AI") {
+
+        return `인기도, 기본 평가, 다양성, 무작위 변수 등을 복합적으로 계산한 결과 높은 종합 점수를 기록했습니다.`;
+
+    }
+
+    return `🎲 특별한 이유는 없습니다. 오늘의 운명 알고리즘이 ${food.name}을(를) 선택했습니다.`;
+
+}
+
+
+/* =====================================
+   RESTART
+===================================== */
+
+function restart() {
+
+    selectedCategory = null;
+    selectedStyle = null;
+    currentFoods = [];
+
+    renderCategories();
+
+    showScreen("categoryScreen");
+
+    updateProgress(1);
+
+}
+
+
+/* =====================================
+   INITIALIZE
+===================================== */
+
+renderCategories();
+
+renderStyles();
+
+</script>
+
+</body>
+</html>
